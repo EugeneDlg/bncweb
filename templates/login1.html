@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login to BnC game</title>
+<link rel="stylesheet" type="text/css" href={% static 'styles.css' %}>
+<body>
+<div class="form_auth_block">
+  <div class="form_auth_block_content">
+    <p class="form_auth_block_head_text">Login to BnC game</p>
+    <form class="form_auth_style" action="{% url 'login' %}" method="post">
+      <label>Your login:</label>
+      <input type="text" name="auth_login" required >
+      <label>Your password:</label>
+      <input type="password" name="auth_pass" required >
+      <button class="form_auth_button" type="submit" name="form_auth_submit">Log in</button>
+    </form>
+  </div>
+</div>
+</body>
+</head>
+</html>
