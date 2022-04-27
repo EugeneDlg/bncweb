@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,8 +81,10 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'bnc',
-        'USER': "bnc_default",
-        "PASSWORD": "bncdflt1!",
+        # 'USER': "bnc_default",
+        # "PASSWORD": "bncdflt1!",
+        'USER': "postgres",
+        "PASSWORD": "tP$sa7Ml",
         "HOST": "rtrdb.cnreopapz1wl.us-east-1.rds.amazonaws.com",
         "PORT": "5432",
     }
@@ -124,7 +127,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = ('/home/eugineer/PythonProjects/BnCweb/bncweb/templates/static',)
+# STATICFILES_DIRS = ('/home/eugineer/PythonProjects/BnCweb/bncweb/templates/static',)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

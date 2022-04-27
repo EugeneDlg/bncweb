@@ -1,1 +1,44 @@
-<h1>Sign Up</h1>
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %}
+{% load crispy_forms_tags %}
+<title>Create a new user</title>
+<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
+</head>
+<body>
+	<div>
+		{% if not form.is_valid %}
+			<div>
+				<br>
+				<h1>
+					Create a new account
+				</h1>
+				<br>
+				<div class="form_auth_block_head_text">
+					<br>
+					<p>Please input the following information to create a new account</p>
+					<form method="post">
+						{% csrf_token %}
+						<p>{{ form | crispy }}</p>
+						<button type="submit" name="button" class="form_auth_button">SignUp</button>
+					</form>
+				</div>
+			</div>
+		{% else %}
+		<div>
+			<br>
+			<h1>
+				Your account has been successfully created
+			</h1>
+			<br>
+			<div>
+				<p>Your account has been created and ready to use!</p>
+				<br>
+				<a href="{% url 'home' %}">Continue shopping</a>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+</body>
+</html>

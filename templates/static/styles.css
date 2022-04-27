@@ -1,3 +1,9 @@
+.alert-danger {
+	color: red;
+	display: block;
+    background: #ffffff;
+    opacity: 0.7;
+}
 .form_auth_block{
     width: 500px;
     height: 500px;
