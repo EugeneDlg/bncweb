@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
+from .models import Game
 
 
 class MyAuthForm(AuthenticationForm):
@@ -35,10 +36,10 @@ def login_view(request):
 			username = request.POST['username']
 			password = request.POST['password']
 			user = authenticate(username=username, password=password)
-
 			if user is not None:
 				login(request, user)
 				return redirect('home')
+				# return render(request, 'home.html', {'capacity': request.game.capacity})
 			else:
 				return redirect('signup')
 		else:
@@ -59,7 +60,13 @@ def login_view(request):
 
 @login_required(login_url='login')
 def home(request):
+	if request.method == "POST":
+		print("POST")
+	else:
+		print("GET")
+		game = Game.objects.get(game_id=request.session.session_key)
 	return render(request, 'home.html')
+	# return render(request, 'home.html', )
 
 
 def signout_view(request):

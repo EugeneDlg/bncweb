@@ -2203,6 +2203,7 @@ def read_phrases():
 
 
 def run():
+
     game = Game()
     main_win = MainWin()
     main_win.game = game
@@ -2214,9 +2215,7 @@ def run():
     main_win.open_login_window()
     main_win.mainloop()
 
-
 read_config()
 read_phrases()
-
 if __name__ == '__main__':
     run()
