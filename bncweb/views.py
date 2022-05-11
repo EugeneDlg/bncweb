@@ -1,12 +1,9 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
-from .models import Game
+# from .models import Game
 
 
 class MyAuthForm(AuthenticationForm):
@@ -56,17 +53,6 @@ def login_view(request):
 #         'is_taken': User.objects.filter(username__iexact=username).exists()
 #     }
 #     return JsonResponse(response)
-
-
-@login_required(login_url='login')
-def home(request):
-	if request.method == "POST":
-		print("POST")
-	else:
-		print("GET")
-		game = Game.objects.get(game_id=request.session.session_key)
-	return render(request, 'home.html')
-	# return render(request, 'home.html', )
 
 
 def signout_view(request):
