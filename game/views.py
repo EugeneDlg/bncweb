@@ -10,6 +10,14 @@ from .models import Game
 def home(request):
     if request.method == "POST":
         print("POST")
+        my_cows = request.POST["my_cows_"]
+        my_bulls = request.POST["my_bulls_"]
+        print(my_cows)
+        print(my_bulls)
+        try:
+            game = Game.objects.get(game_id=request.session.session_key)
+        except:
+            raise
     else:
         print("GET")
         try:

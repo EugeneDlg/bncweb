@@ -11,7 +11,7 @@ class Game(models.Model):
     my_guess = models.IntegerField(null=True)
     your_guess = models.IntegerField(null=True)
     your_number = models.IntegerField(null=True)
-    capacity = models.IntegerField(default=5, editable=False)
+    capacity = models.IntegerField(default=4, editable=False)
     dual_game = models.BooleanField(null=True)
     game_started = models.BooleanField(null=True)
     start_time = models.DateTimeField(null=True)
