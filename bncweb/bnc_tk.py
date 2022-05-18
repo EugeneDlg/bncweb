@@ -272,14 +272,6 @@ class Game:
         if correct_pincode != entered_pincode:
             raise BnCException("Incorrect pincode")
 
-    def get_new_guess_proposal(self):
-        new_guess_proposal = ''
-        while len(new_guess_proposal) < self.capacity:
-            c = str(random.randint(0, 9))
-            if (not (c in self.guess_proposal)) and (not (c in new_guess_proposal)):
-                new_guess_proposal += c
-        self.guess_proposal = new_guess_proposal
-
     @staticmethod
     def populate(interim_str, items_for_templates):
         guess_set = set()

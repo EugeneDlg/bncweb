@@ -11,31 +11,23 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
-        <div class="card mb-5">Please think of a number with {{ game.capacity }} unique digits!</div>
+        <div class="card mb-5">{{ game.upper_poster }}</div>
       </div>
     </div>
-    <form action="#" method="post">
+    <form action="{% if game.dual_game %}
+                   {% url 'dualgame' %}
+                   {% else %}
+                   {% url 'singlegame' %}
+                   {% endif %}" method="post">
     {% csrf_token %}
-      <div class="row">
-        <div class="col-lg-6 text-center">
-          <div class="card mb-5">My part</div>
-          <div class="card mb-5">I guess your number is: {{ game.my_guess }}
-            <div>Enter the number of cows: <input type="text" name="my_cows_" autofocus maxlength="10" required id="id_my_cows"></div>
-            <div>Enter the number of bulls: <input type="text" name="my_bulls_" autofocus maxlength="10" required id="id_my_bulls"></div>
-          </div>
-        </div>
-        <div class="col-lg-6 text-center">
-          <div class="card mb-5">Your part</div>
-          <div class="card mb-5">Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="10" required id="id_your_guess">
-            <div>You have found qty of cows: {{ game.your_cows}}</div>
-            <div>You have found qty of bulls: {{ game.your_bulls }}</div>
-          </div>
-        </div>
-      </div>
       <div class="row">
         <div class="col-lg-12 text-center">
           <div class="card">
-            <button type="submit">Go on!</button>
+            <button type="submit">
+              {% if game.attempts == 0 %} Start a game!
+              {% else %} Ok!
+              {% endif %}
+            </button>
           </div>
         </div>
       </div>
