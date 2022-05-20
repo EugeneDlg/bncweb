@@ -26,7 +26,7 @@ def home(request):
                 game_id=request.session.session_key,
                 # capacity=4,
                 game_started=False,
-                upper_poster="Please think of a number with " + str(game.capacity) + "unique digits!",
+                upper_poster="Please think of a number with 4 digits",
                 attempts=0
             )
             game.save()
