@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-	Home
+	Dual BnC Game
 {% endblock %} 
 
 {% block content %}
@@ -11,24 +11,37 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
-        <div class="card mb-5">{{ upper_poster }}</div>
+        {% if result_code == 0 %}
+          <div class="card mb-5 broken_game">{{ game.upper_poster }}</div>
+        {% elif result_code == 1 %}
+          <div class="card mb-5 my_win">{{ game.upper_poster }}</div>
+        {% elif resu;t_code == 2 %}
+          <div class="card mb-5 your_win">{{ game.upper_poster }}</div>
+        {% elif result_code == 3 %}
+          <div class="card mb-5 tie">{{ game.upper_poster }}</div>
+        {% else %}
+          <div class="card mb-5">{{ game.upper_poster }}</div>
+        {% endif %}
       </div>
     </div>
-    <form action="#" method="post">
+    <form id="game_form" method="post" {% if game.game_started == false %} class="form-inactive" {% endif %}>
     {% csrf_token %}
       <div class="row">
         <div class="col-lg-6 text-center">
           <div class="card mb-5">My part</div>
-          <div class="card mb-5">I guess your number is:{{ game.my_guess }}
-            <div>Enter the number of cows:  <input type="text" name="my_cows_" autofocus maxlength="10" required id="id_my_cows"></div>
-            <div>Enter the number of bulls: <input type="text" name="my_bulls_" autofocus maxlength="10" required id="id_my_bulls"></div>
+          <div class="card mb-5">I guess your number is: {{ game.my_guess }}
+            <div>Enter the number of cows:  <input type="text" name="my_cows" autofocus maxlength="10" required id="my_cows"></div>
+            <br>
+            <div>Enter the number of bulls: <input type="text" name="my_bulls" autofocus maxlength="10" required id="my_bulls"></div>
+            <br>
           </div>
         </div>
         <div class="col-lg-6 text-center">
           <div class="card mb-5">Your part</div>
-          <div class="card mb-5">Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="10" required id="id_your_guess">
-            <div>You have found qty of cows: {{ game.your_cows}}</div>
-            <div>You have found qty of bulls: {{ game.your_bulls }}</div>
+          <div class="card mb-5">Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="10" required id="your_guess">
+            <div>You have found qty of cows: {% if game.your_cows is not None %} {{ game.your_cows}} {% endif %}</div>
+            <br>
+            <div>You have found qty of bulls: {% if game.your_bulls is not None %} {{ game.your_bulls }} {% endif %}</div>
           </div>
         </div>
       </div> 
@@ -47,5 +60,8 @@
     </form>
   </div>
 </div>
-
+<div class="center">
+Attempts: {{ game.attempts }}
+</div>
 {% endblock %}
+

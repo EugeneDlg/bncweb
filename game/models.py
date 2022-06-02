@@ -5,14 +5,14 @@ from django.db import models
 # Create your models here.
 class Game(models.Model):
     game_id = models.CharField(max_length=251, unique=True)
-    my_bulls = models.IntegerField(null=True, default=5, editable=False)
+    my_bulls = models.IntegerField(null=True)
     my_cows = models.IntegerField(null=True)
-    my_guess = models.IntegerField(null=True)
-    my_number = models.IntegerField(null=True)
+    my_guess = models.CharField(max_length=10, null=True)
+    my_number = models.CharField(max_length=10, null=True)
     your_bulls = models.IntegerField(null=True)
     your_cows = models.IntegerField(null=True)
-    your_guess = models.IntegerField(null=True)
-    your_number = models.IntegerField(null=True)
+    your_guess = models.CharField(max_length=10, null=True)
+    your_number = models.CharField(max_length=10, null=True)
     capacity = models.IntegerField(default=4, editable=False)
     attempts = models.IntegerField(default=0)
     available_digits_str = models.CharField(max_length=10, default="0123456789")
@@ -32,8 +32,8 @@ class Game(models.Model):
 
 
 class MyHistory(models.Model):
-    game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
-    items = ArrayField(ArrayField(models.IntegerField(), size=3), size=100)
+    game_id = models.ForeignKey(Game, to_field="game_id", on_delete=models.CASCADE)
+    items = ArrayField(ArrayField(models.CharField(max_length=10), size=3), null=True)
 
     class Meta:
         ordering = ['game_id']
@@ -44,8 +44,8 @@ class MyHistory(models.Model):
 
 
 class YourHistory(models.Model):
-    game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
-    items = ArrayField(ArrayField(models.IntegerField(), size=3))
+    game_id = models.ForeignKey(Game, to_field="game_id", on_delete=models.CASCADE)
+    items = ArrayField(ArrayField(models.CharField(max_length=10), size=3), null=True)
 
     class Meta:
         ordering = ['game_id']
@@ -56,8 +56,8 @@ class YourHistory(models.Model):
 
 
 class TotalSet(models.Model):
-    game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
-    set = ArrayField(models.IntegerField())
+    game_id = models.ForeignKey(Game, to_field="game_id", on_delete=models.CASCADE)
+    set = ArrayField(models.CharField(max_length=10, null=True), null=True)
 
     class Meta:
         ordering = ['game_id']
@@ -68,8 +68,8 @@ class TotalSet(models.Model):
 
 
 class CurrentSet(models.Model):
-    game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
-    set = ArrayField(models.IntegerField())
+    game_id = models.ForeignKey(Game, to_field="game_id", on_delete=models.CASCADE)
+    set = ArrayField(models.CharField(max_length=10, null=True), null=True)
 
     class Meta:
         ordering = ['game_id']
