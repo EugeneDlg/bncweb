@@ -11,11 +11,12 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
+
         {% if result_code == 0 %}
-          <div class="card mb-5 broken_game">{{ game.upper_poster }}</div>
+          <div class="card mb-5 game_broken">{{ game.upper_poster }}</div>
         {% elif result_code == 1 %}
           <div class="card mb-5 my_win">{{ game.upper_poster }}</div>
-        {% elif resu;t_code == 2 %}
+        {% elif result_code == 2 %}
           <div class="card mb-5 your_win">{{ game.upper_poster }}</div>
         {% elif result_code == 3 %}
           <div class="card mb-5 tie">{{ game.upper_poster }}</div>
@@ -24,21 +25,33 @@
         {% endif %}
       </div>
     </div>
-    <form id="game_form" method="post" {% if game.game_started == false %} class="form-inactive" {% endif %}>
+    <form id="game_form" method="post" {% if not game.game_started %} class="form-inactive" {% endif %}>
     {% csrf_token %}
       <div class="row">
         <div class="col-lg-6 text-center">
           <div class="card mb-5">My part</div>
-          <div class="card mb-5">I guess your number is: {{ game.my_guess }}
-            <div>Enter the number of cows:  <input type="text" name="my_cows" autofocus maxlength="10" required id="my_cows"></div>
+          <div class="card mb-5"><span id="my_guess">I guess your number is: {{ game.my_guess }}</span>
+            <div>Enter the number of cows:  <input type="text" name="my_cows" autofocus maxlength="10" required id="my_cows"
+                                            {% if not game.game_started %} disabled {% endif %}></div>
             <br>
-            <div>Enter the number of bulls: <input type="text" name="my_bulls" autofocus maxlength="10" required id="my_bulls"></div>
+            <div>Enter the number of bulls: <input type="text" name="my_bulls" autofocus maxlength="10" required id="my_bulls"
+                                            {% if not game.game_started %} disabled {% endif %}></div>
             <br>
+            <div class="card">
+              <h5 class="card-header">My history</h5>
+              <ul class="list-group list-group-flush">
+                {% for i in items %}
+                <li class="list-group-item">{% i[0] %}</li>
+
+                {% endfor %}
+
+            </div>
           </div>
         </div>
         <div class="col-lg-6 text-center">
           <div class="card mb-5">Your part</div>
-          <div class="card mb-5">Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="10" required id="your_guess">
+          <div class="card mb-5">Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="10" required id="your_guess"
+                                                                  {% if not game.game_started %} disabled {% endif %}>
             <div>You have found qty of cows: {% if game.your_cows is not None %} {{ game.your_cows}} {% endif %}</div>
             <br>
             <div>You have found qty of bulls: {% if game.your_bulls is not None %} {{ game.your_bulls }} {% endif %}</div>
@@ -46,22 +59,23 @@
         </div>
       </div> 
 
-      <div class="row">
+      <div class="row justify-content-center">
         <div class="col-lg-12 text-center">
-          <div class="card">
-            <button type="submit">
-              {% if game.attempts == 0 %} Start a game!
-              {% else %} Ok!
+            <button type="submit" style="width: 18rem;">
+              {% if game.attempts == 0 %} Start a game!!
+              {% elif game.game_started %} Ok!
+              {% else %} Play again!
               {% endif %}
             </button>
           </div>
-        </div>
       </div>
     </form>
+    <br>
+    <div id="wait" style="font-size: 120%; color: grey; text-align: center; font-family: cursive;"><i>Wait...</i></div>
   </div>
 </div>
 <div class="center">
-Attempts: {{ game.attempts }}
+  Attempts: {{ game.attempts }}
 </div>
 {% endblock %}
 

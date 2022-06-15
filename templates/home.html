@@ -14,24 +14,21 @@
         <div class="card mb-5">{{ game.upper_poster }}</div>
       </div>
     </div>
-    <form action="{% if game.dual_game %}
+    <div class="row justify-content-center">
+      <div class="col-lg-12 text-center">
+        <form action="{% if game.dual_game %}
                    {% url 'dualgame' %}
                    {% else %}
                    {% url 'singlegame' %}
                    {% endif %}" method="post">
-    {% csrf_token %}
-      <div class="row">
-        <div class="col-lg-12 text-center">
-          <div class="card">
-            <button type="submit">
-              {% if game.attempts == 0 %} Start a game!
-              {% else %} Ok!
-              {% endif %}
-            </button>
-          </div>
+          {% csrf_token %}
+          <button type="submit" style="width: 18rem;">
+              Start a game!
+          </button>
+          </form>
         </div>
       </div>
-    </form>
+
   </div>
 </div>
 

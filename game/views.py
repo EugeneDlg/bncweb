@@ -70,7 +70,6 @@ def dual_game(request):
             total_set = TotalSet.objects.get(game_id=request.session.session_key)
         except:
             raise
-
         if game.attempts == 0:
             # if not flag:
             #     return JsonResponse({"is_OK": True})
@@ -104,6 +103,7 @@ def dual_game(request):
                     game.save()
                     return JsonResponse({"is_OK": True})
 
+            result_code = None
             if my_history.items is None:
                 game.my_history_list = []
             else:
@@ -115,13 +115,15 @@ def dual_game(request):
             try:
                 my_result = make_my_guess(game)
             except FinishedNotOKException as exc:
-                finish_dual_game(0)
+                finish_dual_game(game, 0)
+                return render(request, 'dualgame.html', {'game': game, 'result_code': 0})
             my_history.items = game.my_history_list
             my_history.save()
             total_set.set = list(game.total_set)
             total_set.save()
             del game.my_history_list
             del game.total_set
+            game.save()
             if game.dual_game:
                 if your_history.items is None:
                     game.your_history_list = []
@@ -133,8 +135,13 @@ def dual_game(request):
                 del game.your_history_list
             else:
                 your_result = False
-            game.save()
-            return render(request, 'dualgame.html', {'game': game, 'result_code': None})
+            if my_result and not your_result:
+                finish_dual_game(game, 1)
+            if your_result and not my_result:
+                finish_dual_game(game, 2)
+            if your_result and my_result:
+                finish_dual_game(game, 3)
+            return render(request, 'dualgame.html', {'game': game, 'result_code': result_code})
     else:
         print("GET dualgame")
         try:
@@ -173,24 +180,61 @@ def home1(request):
     return render(request, 'singlegame.html')
 
 
-def finish_dual_game(request, game, result_code):
+def finish_dual_game(game, result_code):
     # game.finish_timestamp = time()
     game.game_started = False
     if result_code == 0:
-        game.upper_label = "You have broken my mind! Please be more carefull! Think of a new number!"
+        game.upper_poster = "You have broken my mind! Please be more careful! Think of a new number!"
+        print("result code:", result_code)
     elif result_code == 1:
-        game.upper_label = "YAHOO! I've won! Thank you the for interesting game!" \
+        game.upper_poster = "YAHOO! I've won! Thank you the for interesting game! " \
                                    "Attempts: " + str(game.attempts)
     elif result_code == 2:
-        game.upper_label = "Today is your day! You've won! Congrats!" \
+        game.upper_poster = "Today is your day! You've won. Congrats! " \
                                    "Attempts: " + str(game.attempts)
     else:
-        game.upper_label = "We've ended this game in a tie!.." \
+        game.upper_poster = "We've ended this game in a tie... " \
                                    "Attempts: " + str(game.attempts)
     game.new_game_requested = True
+    game.game_started = False
+    game.my_guess = None
+    game.save()
     # add_item_to_my_and_your_history_frame()
     # if result_code > 0:
     #     write_fl_to_db(game, result_code)
-    return render(request, 'dualgame.html', {'game': game, 'result_code': result_code})
+    # return render(request, 'dualgame.html', {'game': game, 'result_code': result_code})
 
 
+def new_game(request):
+    try:
+        game = Game.objects.get(game_id=request.session.session_key)
+        my_history = MyHistory.objects.get(game_id=request.session.session_key)
+        your_history = YourHistory.objects.get(game_id=request.session.session_key)
+        total_set = TotalSet.objects.get(game_id=request.session.session_key)
+    except:
+        raise
+    my_history.items = []
+    my_history.save()
+    your_history.items = []
+    your_history.save()
+    total_set.set = []
+    total_set.save()
+    game.game_started = False
+    game.new_game_requested = True
+    game.my_bulls = None
+    game.my_cows = None
+    game.my_guess = None
+    game.my_number = None
+    game.your_bulls = None
+    game.your_cows = None
+    game.your_guess = None
+    game.your_number = None
+    game.capacity = 4
+    game.attempts = 0
+    game.available_digits_str = "0123456789"
+    game.start_time = None
+    game.finish_time = None
+    game.upper_poster = "Please think of a number with 4 digits"
+    # game.dual_game keeps the previous state
+    game.save()
+    return redirect('home')
