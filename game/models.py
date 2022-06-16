@@ -23,3 +23,6 @@ class Game(models.Model):
 
     def __str__(self):
         return self.game_id
+
+
+
