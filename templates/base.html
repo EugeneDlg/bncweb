@@ -16,7 +16,101 @@
       rel="stylesheet">
 
     <title>{% block title %} Bulls and Cows {% endblock %}</title>
+    <style>
+      .center {
+        position: fixed;
+        bottom: 20px;
+        width:100%;
+        text-align:center;
+      }
+      .err_input {border-color:red;}
+      .err_label {font-size: 80%; color: red;}
+      .form-inactive {
+         color: grey;
+      }
+
+      .game_broken {
+        color: red;
+        font-weight: bold;
+      }
+      .my_win {
+        color: green;
+        font-weight: bold;
+        font-size: 110%;
+      }
+      .your_win {
+        color: blue;
+        font-weight: bold;
+        font-size: 110%;
+      }
+      .tie {
+        color: yellow;
+        font-weight: bold;
+        font-size: 110%;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      var inputs = ['my_cows', 'my_bulls', 'your_guess'];
+      function remove_warnings(){
+        for (var i=0; i < inputs.length; i++){
+          var item = document.getElementById(inputs[i]);
+          $(item).removeClass('err_input');
+          $('#error_'+item.name).remove();
+        };
+      }
+      $(document).ready(function () {
+        wait_item = document.getElementById('wait');
+        $("#game_form").on("submit", function(){
+            wait_item.style.display = '';
+            var dict0 = $(this).serialize();
+            var dict_json = dict0 + '&flag=0';
+            csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+            $.ajax({
+                url: '/home/dualgame/',
+                method: 'post',
+                dataType: 'json',
+                data: dict_json,
+                success: function(data){
+                    remove_warnings();
+                    if (data.is_OK == false){
+                                          wait_item.style.display = 'none';
+                      tag_items = data.items;
+                      for(var key in tag_items) {
+                        item = document.getElementById(key);
+                        $(item).addClass('err_input');
+                        $(item).after('<div class=\'err_label\' id=\'error_' + item.name+ '\'>' + tag_items[key] + '</div>');
+                      };
+                    }
+                    else {
+                        post_dict = {'csrfmiddlewaretoken': csrfmiddlewaretoken, 'flag':1};
+                        $('body').load('/home/dualgame/', post_dict);
+                                            wait_item.style.display = 'none';
+                    };
+                },
+                error: function (response) {
+                      wait_item.style.display = 'none';
+                      console.log(response.responseJSON.errors);
+                }
+            });
+            return false;
+        });
+        {% if game.game_started == True %}
+        var count = 0;
+        var f = document.getElementById('my_guess');
+        var IntervalId = setInterval(function() {
+          if (count++ < 10){
+            f.style.fontWeight = (f.style.fontWeight == 'bold' ? 'normal' : 'bold');
+          }else{
+            clearInterval(IntervalId);
+          };
+        }, 200);
+        {% endif %}
+        wait_item.style.display = 'none';
+      })
+    </script>
   </head>
+
   <body>
     {% include 'navbar.html' %}
     {% block content %}
@@ -24,8 +118,6 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
   </body>
 </html>
