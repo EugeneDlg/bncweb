@@ -246,5 +246,5 @@ def new_game(request):
     game.save()
     return redirect('home')
 
-
-def fixture_list():
+#
+# def fixture_list():

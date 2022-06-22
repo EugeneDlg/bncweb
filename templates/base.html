@@ -85,7 +85,8 @@
                     else {
                         post_dict = {'csrfmiddlewaretoken': csrfmiddlewaretoken, 'flag':1};
                         $('body').load('/home/dualgame/', post_dict);
-                                            wait_item.style.display = 'none';
+                        $('body').on('load', function() {
+                                            wait_item.style.display = 'none';});
                     };
                 },
                 error: function (response) {
