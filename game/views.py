@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from .models import Game, MyHistory, YourHistory, TotalSet, CurrentSet
+from .models import Game, MyHistory, YourHistory, TotalSet
 
 from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
@@ -43,10 +43,6 @@ def home(request):
                 game_id=game
             )
             total_set.save()
-            current_set = CurrentSet.objects.create(
-                game_id=game
-            )
-            current_set.save()
         if game.attempts > 0:
             if game.dual_game:
                 return redirect('dualgame')
@@ -99,7 +95,7 @@ def dual_game(request):
                 else:
                     game.my_cows = int(my_cows_entered)
                     game.my_bulls = int(my_bulls_entered)
-                    game.your_guess = int(your_guess_entered)
+                    game.your_guess = str(your_guess_entered)
                     game.save()
                     return JsonResponse({"is_OK": True})
 
@@ -115,15 +111,16 @@ def dual_game(request):
             try:
                 my_result = make_my_guess(game)
             except FinishedNotOKException as exc:
+                game.result_code = 0
+                game.save()
                 finish_dual_game(game, 0)
-                return render(request, 'dualgame.html', {'game': game, 'result_code': 0})
+                return render(request, 'dualgame.html', {'game': game})
             my_history.items = game.my_history_list
             my_history.save()
             total_set.set = list(game.total_set)
             total_set.save()
             del game.my_history_list
             del game.total_set
-            game.save()
             if game.dual_game:
                 if your_history.items is None:
                     game.your_history_list = []
@@ -135,17 +132,23 @@ def dual_game(request):
                 del game.your_history_list
             else:
                 your_result = False
+            game.save()
             if my_result and not your_result:
-                finish_dual_game(game, 1)
+                game.result_code = 1
             if your_result and not my_result:
-                finish_dual_game(game, 2)
+                game.result_code = 2
             if your_result and my_result:
-                finish_dual_game(game, 3)
-            return render(request, 'dualgame.html', {'game': game, 'result_code': result_code, 'my_history': my_history.items})
+                game.result_code = 3
+            if game.result_code is not None:
+                finish_dual_game(game)
+            return render(request, 'dualgame.html', {'game': game,
+                                                     'my_items': my_history.items, 'your_items': your_history.items})
     else:
         print("GET dualgame")
         try:
             game = Game.objects.get(game_id=request.session.session_key)
+            my_history = MyHistory.objects.get(game_id=request.session.session_key)
+            your_history = YourHistory.objects.get(game_id=request.session.session_key)
         except Exception:
             raise
         if game.attempts == 0:
@@ -158,7 +161,9 @@ def dual_game(request):
         #         attempts=0
         #     )
         #     game.save()
-    return render(request, 'dualgame.html', {'game': game, 'my_history': my_history.items})
+    print("length of items: ", len(my_history.items))
+    return render(request, 'dualgame.html', {'game': game,
+                                             'my_items': my_history.items, 'your_items': your_history.items})
 
 
 @login_required(login_url='login')
@@ -180,12 +185,12 @@ def home1(request):
     return render(request, 'singlegame.html')
 
 
-def finish_dual_game(game, result_code):
+def finish_dual_game(game):
     # game.finish_timestamp = time()
+    result_code = game.result_code
     game.game_started = False
     if result_code == 0:
         game.upper_poster = "You have broken my mind! Please be more careful! Think of a new number!"
-        print("result code:", result_code)
     elif result_code == 1:
         game.upper_poster = "YAHOO! I've won! Thank you the for interesting game! " \
                                    "Attempts: " + str(game.attempts)
@@ -198,6 +203,7 @@ def finish_dual_game(game, result_code):
     game.new_game_requested = True
     game.game_started = False
     game.my_guess = None
+    game.your_guess = None
     game.save()
     # add_item_to_my_and_your_history_frame()
     # if result_code > 0:
@@ -238,3 +244,6 @@ def new_game(request):
     # game.dual_game keeps the previous state
     game.save()
     return redirect('home')
+
+#
+# def fixture_list():

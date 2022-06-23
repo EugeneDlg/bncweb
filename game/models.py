@@ -22,6 +22,7 @@ class Game(models.Model):
     start_time = models.DateTimeField(null=True)
     finish_time = models.DateTimeField(null=True)
     upper_poster = models.CharField(max_length=250, null=True)
+    result_code = models.IntegerField(null=True)
 
     class Meta:
         ordering = ['game_id']
@@ -62,18 +63,6 @@ class TotalSet(models.Model):
     class Meta:
         ordering = ['game_id']
         db_table = 'total_set'
-
-    def __str__(self):
-        return self.game_id
-
-
-class CurrentSet(models.Model):
-    game_id = models.ForeignKey(Game, to_field="game_id", on_delete=models.CASCADE)
-    set = ArrayField(models.CharField(max_length=10, null=True), null=True)
-
-    class Meta:
-        ordering = ['game_id']
-        db_table = 'current_set'
 
     def __str__(self):
         return self.game_id
