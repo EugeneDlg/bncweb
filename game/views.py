@@ -141,7 +141,7 @@ def dual_game(request):
                 finish_dual_game(game, 2)
             if your_result and my_result:
                 finish_dual_game(game, 3)
-            return render(request, 'dualgame.html', {'game': game, 'result_code': result_code})
+            return render(request, 'dualgame.html', {'game': game, 'result_code': result_code, 'my_history': my_history.items})
     else:
         print("GET dualgame")
         try:
@@ -158,7 +158,7 @@ def dual_game(request):
         #         attempts=0
         #     )
         #     game.save()
-    return render(request, 'dualgame.html', {'game': game})
+    return render(request, 'dualgame.html', {'game': game, 'my_history': my_history.items})
 
 
 @login_required(login_url='login')
