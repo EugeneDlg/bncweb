@@ -1,5 +1,6 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -66,3 +67,16 @@ class TotalSet(models.Model):
 
     def __str__(self):
         return self.game_id
+
+
+class FixtureList(models.Model):
+    username = models.ForeignKey(User, to_field="username", on_delete=models.CASCADE)
+    winner = models.IntegerField()
+    attempts = models.IntegerField()
+    timestamp = models.DateTimeField()
+    duration = models.IntegerField()
+
+    class Meta:
+        ordering = ['id']
+        db_table = 'fixture_list'
+

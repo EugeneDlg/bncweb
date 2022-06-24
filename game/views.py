@@ -1,10 +1,11 @@
-from time import time
+import time
+import math
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from .models import Game, MyHistory, YourHistory, TotalSet
+from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList
 
 from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
@@ -72,7 +73,7 @@ def dual_game(request):
             game.my_guess = get_my_first_guess(game.capacity)
             game.my_number = think_of_number_for_you(game.capacity)
             game.attempts += 1
-            game.start_timestamp = time()
+            game.start_timestamp = time.time()
             game.game_started = True
             game.upper_poster = "I wish you an interesting game!:-)"
             game.save()
@@ -98,8 +99,7 @@ def dual_game(request):
                     game.your_guess = str(your_guess_entered)
                     game.save()
                     return JsonResponse({"is_OK": True})
-
-            result_code = None
+            # result_code = None
             if my_history.items is None:
                 game.my_history_list = []
             else:
@@ -140,7 +140,7 @@ def dual_game(request):
             if your_result and my_result:
                 game.result_code = 3
             if game.result_code is not None:
-                finish_dual_game(game)
+                finish_dual_game(request, game)
             return render(request, 'dualgame.html', {'game': game,
                                                      'my_items': my_history.items, 'your_items': your_history.items})
     else:
@@ -171,22 +171,12 @@ def single_game(request):
     return render(request, 'singlegame.html')
 
 
-def validate_game_data(request):
-    return render(request, 'singlegame.html')
-    # my_cows = request.GET.get('my_cows_', None)
-    # print("validate my cows")
-    # response = {
-    #     'is_correct': False
-    # }
-    # return JsonResponse(response)
-
-
 def home1(request):
     return render(request, 'singlegame.html')
 
 
-def finish_dual_game(game):
-    # game.finish_timestamp = time()
+def finish_dual_game(request, game):
+    game.finish_timestamp = time.time()
     result_code = game.result_code
     game.game_started = False
     if result_code == 0:
@@ -205,10 +195,8 @@ def finish_dual_game(game):
     game.my_guess = None
     game.your_guess = None
     game.save()
-    # add_item_to_my_and_your_history_frame()
-    # if result_code > 0:
-    #     write_fl_to_db(game, result_code)
-    # return render(request, 'dualgame.html', {'game': game, 'result_code': result_code})
+    if result_code > 0:
+        write_fl_to_db(request, game)
 
 
 def new_game(request):
@@ -247,3 +235,13 @@ def new_game(request):
 
 #
 # def fixture_list():
+
+def write_fl_to_db(request, game):
+    game = FixtureList.objects.create(
+        username=request.user.username,
+        winner=game.result_code,
+        attempts=game.attempts,
+        timestamp=game.start_timestamp,
+        duration=math.ceil((game.finish_timestamp - game.start_timestamp) / 60)
+    )
+    game.save()
