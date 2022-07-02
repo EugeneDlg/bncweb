@@ -37,8 +37,7 @@
                                             {% if not game.game_started %} disabled {% endif %}></div>
             <br>
             <div>Enter the number of bulls: <input type="text" name="my_bulls" autofocus maxlength="10" required id="my_bulls"
-                                            {% if not game.game_started %} disabled {% endif %}></div>
-            <br>
+                                            {% if not game.game_started %} disabled {% endif %}><br><br></div>
             {% if game.attempts > 1 %}
                 <div class="card">
                   <h6 class="card-header">My history</h6>
@@ -58,8 +57,7 @@
                                                                                 {% if not game.game_started %} disabled {% endif %}></span></div>
             <div>You have found qty of cows: {% if game.your_cows is not None %} {{ game.your_cows}} {% endif %}</div>
             <br>
-            <div>You have found qty of bulls: {% if game.your_bulls is not None %} {{ game.your_bulls }} {% endif %}</div>
-            <br>
+            <div>You have found qty of bulls: {% if game.your_bulls is not None %} {{ game.your_bulls }} {% endif %}<br><br></div>
             {% if game.attempts > 1 %}
             <div class="card">
               <h6 class="card-header">Your history</h6>

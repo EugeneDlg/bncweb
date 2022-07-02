@@ -73,7 +73,7 @@ class FixtureList(models.Model):
     username = models.ForeignKey(User, to_field="username", on_delete=models.CASCADE)
     winner = models.IntegerField()
     attempts = models.IntegerField()
-    timestamp = models.IntegerField()
+    time = models.DateTimeField()
     duration = models.IntegerField()
 
     class Meta:

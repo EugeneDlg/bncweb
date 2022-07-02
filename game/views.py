@@ -1,4 +1,6 @@
-import time
+import time as tm
+import datetime as dt
+from django.utils import timezone
 import math
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -56,10 +58,9 @@ def home(request):
 @login_required(login_url='login')
 def dual_game(request):
     if request.method == "POST":
-        print("POST dualgame")
         flag = int(request.POST.get("flag", False))
         # flag = request.POST["flag"]
-        print(flag)
+        print("flag POST", flag)
         try:
             game = Game.objects.get(game_id=request.session.session_key)
             my_history = MyHistory.objects.get(game_id=request.session.session_key)
@@ -73,9 +74,13 @@ def dual_game(request):
             game.my_guess = get_my_first_guess(game.capacity)
             game.my_number = think_of_number_for_you(game.capacity)
             game.attempts += 1
-            game.start_timestamp = time.time()
+            game.start_time = timezone.now()
+            print(game.start_time.astimezone(timezone.get_default_timezone()).strftime('%d.%m.%Y %H:%M'))
             game.game_started = True
+            print("game started", game.game_started)
+            game.new_game_requested = False
             game.upper_poster = "I wish you an interesting game!:-)"
+            game.result_code = None
             game.save()
             return render(request, 'dualgame.html', {'game': game})
         else:
@@ -161,7 +166,6 @@ def dual_game(request):
         #         attempts=0
         #     )
         #     game.save()
-    print("length of items: ", len(my_history.items))
     return render(request, 'dualgame.html', {'game': game,
                                              'my_items': my_history.items, 'your_items': your_history.items})
 
@@ -176,8 +180,10 @@ def home1(request):
 
 
 def finish_dual_game(request, game):
-    game.finish_timestamp = time.time()
     result_code = game.result_code
+    game.finish_time = timezone.now()
+    if result_code > 0:
+        write_fl_to_db(request, game)
     game.game_started = False
     if result_code == 0:
         game.upper_poster = "You have broken my mind! Please be more careful! Think of a new number!"
@@ -194,9 +200,8 @@ def finish_dual_game(request, game):
     game.game_started = False
     game.my_guess = None
     game.your_guess = None
+    game.attempts = 0
     game.save()
-    if result_code > 0:
-        write_fl_to_db(request, game)
 
 
 def new_game(request):
@@ -238,11 +243,13 @@ def new_game(request):
 
 
 def write_fl_to_db(request, game):
+    start_timestamp = dt.datetime.timestamp(game.start_time)
+    finish_timestamp = dt.datetime.timestamp(game.finish_time)
     game = FixtureList.objects.create(
-        username=request.user.username,
+        username=request.user,
         winner=game.result_code,
         attempts=game.attempts,
-        timestamp=game.start_timestamp,
-        duration=math.ceil((game.finish_timestamp - game.start_timestamp) / 60)
+        time=game.start_time,
+        duration=math.ceil((finish_timestamp - start_timestamp) / 60)
     )
     game.save()
