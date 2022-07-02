@@ -23,7 +23,7 @@ class Game(models.Model):
     start_time = models.DateTimeField(null=True)
     finish_time = models.DateTimeField(null=True)
     upper_poster = models.CharField(max_length=250, null=True)
-    result_code = models.IntegerField(null=True)
+    result_code = models.CharField(max_length=250, null=True)
 
     class Meta:
         ordering = ['game_id']
@@ -73,7 +73,7 @@ class FixtureList(models.Model):
     username = models.ForeignKey(User, to_field="username", on_delete=models.CASCADE)
     winner = models.IntegerField()
     attempts = models.IntegerField()
-    timestamp = models.DateTimeField()
+    timestamp = models.IntegerField()
     duration = models.IntegerField()
 
     class Meta:

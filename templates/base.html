@@ -63,6 +63,9 @@
         wait_item = document.getElementById('wait');
         $("#game_form").on("submit", function(){
             wait_item.style.display = '';
+            {% if not game.game_started %}
+              return true;
+            {% endif %}
             var dict0 = $(this).serialize();
             var dict_json = dict0 + '&flag=0';
             csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;

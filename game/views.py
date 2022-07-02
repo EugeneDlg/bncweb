@@ -236,6 +236,7 @@ def new_game(request):
 #
 # def fixture_list():
 
+
 def write_fl_to_db(request, game):
     game = FixtureList.objects.create(
         username=request.user.username,
