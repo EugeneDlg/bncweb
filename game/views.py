@@ -202,6 +202,7 @@ def finish_dual_game(request, game):
     game.your_guess = None
     game.attempts = 0
     game.save()
+    new_game(request)
 
 
 def new_game(request):
@@ -238,8 +239,13 @@ def new_game(request):
     game.save()
     return redirect('home')
 
-#
-# def fixture_list():
+
+def fixture_list(request):
+    game = Game.objects.get(game_id=request.session.session_key)
+    fl_data = FixtureList.objects.all()
+    for row in fl_data:
+        print(row.id, f'{row.time:%Y-%m-%d %H:%M}')
+    return render(request, 'fixturelist.html', {'fl_data': fl_data})
 
 
 def write_fl_to_db(request, game):
