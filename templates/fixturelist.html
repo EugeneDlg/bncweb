@@ -10,7 +10,8 @@
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">#</th>
+      <th scope="col">First Name</th>
+      <th scope="col">Last Name</th>
       <th scope="col">Login</th>
       <th scope="col">Winner</th>
       <th scope="col">Attempts</th>
@@ -21,12 +22,10 @@
   <tbody>
   {% for i in fl_data %}
     <tr>
-      <th scope="row">{{ i.id }}</th>
-      <td>{{ i.username_id }}</td>
-      <td>{{ i.winner }}</td>
-      <td>{{ i.attempts }}</td>
-      <td>{{ i.time }}</td>
-      <td>{{ i.duration }}</td>
+        {% for ii in i %}
+<!--      <th scope="row">{{ i.first_name }}</th>-->
+      <td>{{ ii }}</td>
+        {% endfor %}
     </tr>
   {% endfor %}
   </tbody>

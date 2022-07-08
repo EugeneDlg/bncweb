@@ -7,10 +7,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList
+from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList, User
 
 from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
+from .bnc_lib import get_data_for_fixture_table
 
 
 @login_required(login_url='login')
@@ -241,11 +242,11 @@ def new_game(request):
 
 
 def fixture_list(request):
-    game = Game.objects.get(game_id=request.session.session_key)
-    fl_data = FixtureList.objects.all()
-    for row in fl_data:
-        print(row.id, f'{row.time:%Y-%m-%d %H:%M}')
+    # print("User: ", User.objects.get(username='greta0').first_name)
+    fl_raw_data = FixtureList.objects.all()
+    fl_data = get_data_for_fixture_table(fl_raw_data, User.objects.get) ###
     return render(request, 'fixturelist.html', {'fl_data': fl_data})
+    # return render(request, 'singlegame.html')
 
 
 def write_fl_to_db(request, game):
