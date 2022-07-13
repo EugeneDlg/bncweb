@@ -61,7 +61,6 @@ def dual_game(request):
     if request.method == "POST":
         flag = int(request.POST.get("flag", False))
         # flag = request.POST["flag"]
-        print("flag POST", flag)
         try:
             game = Game.objects.get(game_id=request.session.session_key)
             my_history = MyHistory.objects.get(game_id=request.session.session_key)
@@ -76,7 +75,6 @@ def dual_game(request):
             game.my_number = think_of_number_for_you(game.capacity)
             game.attempts += 1
             game.start_time = timezone.now()
-            print(game.start_time.astimezone(timezone.get_default_timezone()).strftime('%d.%m.%Y %H:%M'))
             game.game_started = True
             print("game started", game.game_started)
             game.new_game_requested = False

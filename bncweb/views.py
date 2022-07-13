@@ -4,6 +4,14 @@ from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, HttpResponse
 from .forms import SignUpForm
 from django.http import JsonResponse
+from django.template.context_processors import csrf
+from crispy_forms.utils import render_crispy_form
+
+from jsonview.decorators import json_view
+
+import pdb
+
+
 
 
 # from .models import Game
@@ -14,15 +22,29 @@ class MyAuthForm(AuthenticationForm):
     nonfield_css_class = "myerror"
 
 
+@json_view
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
+            # user.first_name = form.cleaned_data['first_name']
+            # user.last_name = form.cleaned_data["last_name"]
+            # user.username = form.cleaned_data["username"]
+            # user.password = form.cleaned_data["password1"]
+            # user.email = form.cleaned_data["email"]
             form.save()
             username = form.cleaned_data.get('username')
             signup_user = User.objects.get(username=username)
-        # user_group = Group.objects.get(name='User')
-        # user_group.user_set.add(signup_user)
+            # user_group = Group.objects.get(name='User')
+            # user_group.user_set.add(signup_user)
+            # Game.create_db_user(login, password1)
+            # Game.create_user_privileges(login, db_user)
+            return {'success': True}
+        ctx = {}
+        ctx.update(csrf(request))
+        form_html = render_crispy_form(form, context=ctx)
+        return {'success': False, 'form_html': form_html}
+
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
@@ -74,7 +96,6 @@ def validate_game_data(request):
 
 
 def test_ajax(request):
-
     if request.method == 'POST':
         flag = int(request.POST["flag"])
         print(flag)
@@ -94,7 +115,7 @@ def test_ajax(request):
                 }
             return JsonResponse(response)
         print("testajax post flag true")
-        return render(request, "testajax.html", {'aa':"QQQQQQQ"})
+        return render(request, "testajax.html", {'aa': "QQQQQQQ"})
     print("testajax get")
     response = {
         'text': False
@@ -105,4 +126,4 @@ def test_ajax(request):
         prefix = "QQQQQQ"
     else:
         prefix = "ZZZZZZ"
-    return render(request, "testajax.html", {'aa':prefix})
+    return render(request, "testajax.html", {'aa': prefix})

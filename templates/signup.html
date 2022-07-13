@@ -5,40 +5,40 @@
 {% load crispy_forms_tags %}
 <title>Create a new user</title>
 <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+var example_form = '#signupform';
+
+$.ajax({
+    url: "{% url 'signup' %}",
+    type: "POST",
+    data: $(example_form).serialize(),
+    success: function(data) {
+    	alert("LL");
+        if (!(data['success'])) {
+            // Here we replace the form, for the
+            $(example_form).replaceWith(data['form_html']);
+        }
+        else {
+            // Here you can show the user a success message or do whatever you need
+            //$(example_form).find('.success-message').show();
+            alert("ZZZZZZz");
+        }
+    },
+    error: function () {
+        $(example_form).find('.error-message').show()
+    }
+});
+</script>
 </head>
 <body>
-	<div>
-		{% if not form.is_valid %}
-			<div>
-				<br>
-				<h1>
-					Create a new account
-				</h1>
-				<br>
-				<div class="form_auth_block_head_text">
-					<br>
-					<p>Please input the following information to create a new account</p>
-					<form method="post">
-						{% csrf_token %}
-						<p>{{ form | crispy }}</p>
-						<button type="submit" name="button" class="form_auth_button">SignUp</button>
-					</form>
-				</div>
-			</div>
-		{% else %}
-		<div>
-			<br>
-			<h1>
-				Your account has been successfully created
-			</h1>
-			<br>
-			<div>
-				<p>Your account has been created and ready to use!</p>
-				<br>
-				<a href="{% url 'home' %}">Continue shopping</a>
-			</div>
-		</div>
-		{% endif %}
-	</div>
+  <div>
+	<p>Please input the following information to create a new account</p>
+	<form id="signupform" method="post">
+		{% csrf_token %}
+		<p>{{ form | crispy }}</p>
+		<button type="submit" name="button" >Create user</button>
+	</form>
+  </div>
 </body>
 </html>

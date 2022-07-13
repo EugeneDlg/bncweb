@@ -7,6 +7,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
 </head>
 <body>
+<div style="text-align:center;">
 <div class="form_auth_block">
   <div class="form_auth_block_content">
     <p class="form_auth_block_head_text">Login to BnC game</p>
@@ -16,6 +17,10 @@
 	    <button class="form_auth_button" type="submit">Log in</button>
     </form>
   </div>
+</div>
+    <a href="{% url 'signup' %}">Create new user</a>
+    <br>
+    <a href="{% url 'signup' %}">Forgot password?</a>
 </div>
 </body>
 </html>
