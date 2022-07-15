@@ -7,37 +7,55 @@
 <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-var example_form = '#signupform';
-
+$(document).ready(function () {
+$("#signup_form").on("submit", function(){
 $.ajax({
     url: "{% url 'signup' %}",
-    type: "POST",
-    data: $(example_form).serialize(),
+    dataType: 'json',
+    method: 'post',
+    data: $(this).serialize(),
     success: function(data) {
     	alert("LL");
-        if (!(data['success'])) {
-            // Here we replace the form, for the
-            $(example_form).replaceWith(data['form_html']);
+    	var button_tag = data['form_html'] + '<button class="form_auth_button" type="submit" name="button" >Create user</button>';
+        if (!(data.success)) {
+            $('#signup_form').replaceWith(button_tag);
+            //$('#signup_form').append(button_tag);
         }
         else {
             // Here you can show the user a success message or do whatever you need
-            //$(example_form).find('.success-message').show();
+            //$('#signup_form').find('.success-message').show();
             alert("ZZZZZZz");
         }
     },
-    error: function () {
-        $(example_form).find('.error-message').show()
+    error: function (response) {
+    	    	alert(response);
+        console.log(response.responseJSON.errors);
     }
 });
+return false;
+});
+});
 </script>
+<style>
+		span{
+        font-weight: normal;
+        color: green;
+        font-size: 10px;
+        }
+        .invalid-feedback::before {
+        content: "\a";
+        white-space: pre;
+        }
+
+</style>
 </head>
 <body>
-  <div>
+  <div class="form_signup_block">
 	<p>Please input the following information to create a new account</p>
-	<form id="signupform" method="post">
+	<form id="signup_form" method="post">
 		{% csrf_token %}
-		<p>{{ form | crispy }}</p>
-		<button type="submit" name="button" >Create user</button>
+		{{ form | crispy }}
+		<button class="form_auth_button" type="submit" name="button" >Create user</button>
 	</form>
   </div>
 </body>

@@ -15,19 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 # from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # from django.conf import settings
 # from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
-    path('', include('game.urls')),
+
     # path('login/', views.loginView, name="login"),
     # path('', include('game.urls')),
     path('home/', include('game.urls')),
     path('signup/', views.signup_view, name="signup"),
     path('login/', views.login_view, name="login"),
     path('signout/', views.signout_view, name="signout"),
+    # path(r'.*', views.login_view, name="login"),
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'))),
+    path('', include('game.urls')),
 ]
 # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

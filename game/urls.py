@@ -4,9 +4,11 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.home, name='home'),
+
     path('dualgame/', views.dual_game, name='dualgame'),
     path('singlegame.html', views.single_game, name='singlegame'),
     path('new_game', views.new_game, name="new_game"),
-    path('fixturelist.html', views.fixture_list, name="fixture_list"),
+    path('fixturelist', views.fixture_list, name="fixture_list"),
+    path('users', views.users_view, name="users"),
+    path('', views.home, name='home'),
 ]

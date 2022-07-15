@@ -174,8 +174,9 @@ def single_game(request):
     return render(request, 'singlegame.html')
 
 
-def home1(request):
-    return render(request, 'singlegame.html')
+@login_required(login_url='login')
+def users_view(request):
+    return render(request, 'users.html')
 
 
 def finish_dual_game(request, game):

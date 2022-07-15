@@ -5,11 +5,19 @@
     opacity: 0.7;
 }
 .form_auth_block{
-    width: 1000px;
-    height: 1000px;
+    width: 500px;
+    height: 500px;
     margin: 0 auto;
     /*background: url(http://www.dailycompass.org/wp-content/uploads/2013/01/Bubbles.jpg);*/
     background: url('/static/bg-image0.jpg');
+    background-size: cover;
+    border-radius: 4px;
+}
+.form_signup_block{
+    width: 800px;
+    height: 800px;
+    margin: 0 auto;
+    /*background: url(http://www.dailycompass.org/wp-content/uploads/2013/01/Bubbles.jpg);*/
     background-size: cover;
     border-radius: 4px;
 }
@@ -58,13 +66,4 @@ input:focus {
     height: 35px;
     border: none;
     cursor: pointer;
-}
-
-a.button0 {
-    -webkit-appearance: button;
-    -moz-appearance: button;
-    appearance: button;
-
-    text-decoration: none;
-    color: yellow;
 }
