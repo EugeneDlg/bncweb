@@ -39,10 +39,12 @@ def signup_view(request):
             # user_group.user_set.add(signup_user)
             # Game.create_db_user(login, password1)
             # Game.create_user_privileges(login, db_user)
+            print("try");
             return {'success': True}
         ctx = {}
         ctx.update(csrf(request))
         form_html = render_crispy_form(form, context=ctx)
+        print("ctx = {}")
         return {'success': False, 'form_html': form_html}
 
     else:
@@ -127,3 +129,7 @@ def test_ajax(request):
     else:
         prefix = "ZZZZZZ"
     return render(request, "testajax.html", {'aa': prefix})
+
+
+def testpage(request):
+    return render(request, "testpage.html")

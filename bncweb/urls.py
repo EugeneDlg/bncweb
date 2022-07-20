@@ -30,6 +30,7 @@ urlpatterns = [
     path('signup/', views.signup_view, name="signup"),
     path('login/', views.login_view, name="login"),
     path('signout/', views.signout_view, name="signout"),
+    path('testpage/', views.testpage, name="testpage"),
     # path(r'.*', views.login_view, name="login"),
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'))),
     path('', include('game.urls')),

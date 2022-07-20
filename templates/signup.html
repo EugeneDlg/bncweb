@@ -8,6 +8,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 $(document).ready(function () {
+	success_item = document.getElementById('success_item');
+    success_item.style.display = 'none';
+    alert("ready function");
 $("#signup_form").on("submit", function(){
 $.ajax({
     url: "{% url 'signup' %}",
@@ -15,16 +18,27 @@ $.ajax({
     method: 'post',
     data: $(this).serialize(),
     success: function(data) {
-    	alert("LL");
-    	var button_tag = data['form_html'] + '<button class="form_auth_button" type="submit" name="button" >Create user</button>';
+
         if (!(data.success)) {
-            $('#signup_form').replaceWith(button_tag);
-            //$('#signup_form').append(button_tag);
+    	var form_without_button = data['form_html'].replace(/<form .*?>/, "");
+    	form_without_button = form_without_button.replace(/<\/form>/, "");
+    	var form_with_button = form_without_button + "<button class=\"form_auth_button\" type=\"submit\" name=\"button\" >Create user</button>";
+    	console.log(form_with_button);
+        $('#signup_form').html(form_with_button);
+        $('#hint_id_password2').text("");
         }
         else {
             // Here you can show the user a success message or do whatever you need
             //$('#signup_form').find('.success-message').show();
-            alert("ZZZZZZz");
+            alert("succsess");
+            success_item.style.display = '';
+            var url = window.location.href;
+            var pattern = /(.*\/{2})(.*?\/)(.*)/i;
+            var result = url.match(pattern);
+            var new_url = result[1] + result[2] + "login";
+            alert(new_url);
+            setTimeout(()=>{window.location.replace(new_url);}, 3000);
+
         }
     },
     error: function (response) {
@@ -34,12 +48,13 @@ $.ajax({
 });
 return false;
 });
+
 });
 </script>
 <style>
 		span{
         font-weight: normal;
-        color: green;
+        color: red;
         font-size: 10px;
         }
         .invalid-feedback::before {
@@ -57,6 +72,9 @@ return false;
 		{{ form | crispy }}
 		<button class="form_auth_button" type="submit" name="button" >Create user</button>
 	</form>
+  </div>
+  <div>
+	<p class="center" style="color: green; font-weight: bold;" id="success_item">The user is successfully created. Forwarding to login page...</p>
   </div>
 </body>
 </html>
