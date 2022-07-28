@@ -4,8 +4,11 @@
 {% load static %}
 {% load crispy_forms_tags %}
 <title>Create a new user</title>
-<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="{% static 'signup_js.js' %}"></script>
 <style>
@@ -30,8 +33,7 @@
 			  <div class="card-body p-md-5">
 				<div class="row justify-content-center">
 				  <div class="col-md-10 col-lg-6 order-2 order-lg-1">
-    				<p style="color: green; font-weight: bold;" id="success_notice">The user is successfully created. Forwarding to login page...</p>
-					<p class="text-center h6 fw-bold mb-5 mx-1 mx-md-4 mt-4" id="initial_notice">Please input the following information to create a new account</p>
+					<p class="text-center h6 fw-bold mb-5 mx-1 mx-md-4 mt-4" id="upper_notice"></p>
 					<form id="signup_form" method="post">
 						{% csrf_token %}
 						{{ form | crispy }}

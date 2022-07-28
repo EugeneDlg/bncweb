@@ -1,9 +1,11 @@
-$(document).ready(function () {
-	success_notice = document.getElementById('success_notice');
-	success_notice.style.display = '';
-	success_notice = document.getElementById('initial_notice');
+var success_text = "The user is successfully created! " + '<i class="material-icons">done</i>' + " Forwarding to login page...";
+var initial_text = "Please input the following information to create a new account";
 
-    initial_notice.style.display = 'none';
+$(document).ready(function () {
+    var upper_notice = $('#upper_notice');
+//    upper_notice.text(initial_text);
+    upper_notice.html(initial_text);
+    upper_notice.attr("style", "color: green; font-weight: bold;");
 $("#signup_form").on("submit", function(){
 $.ajax({
     url: "{% url 'signup' %}",
@@ -22,8 +24,8 @@ $.ajax({
         else {
             // Here you can show the user a success message or do whatever you need
             //$('#signup_form').find('.success-message').show();
-            success_item.style.display = '';
-            initial_notice.style.display = 'none';
+//            success_item.style.display = '';
+//            initial_notice.style.display = 'none';
             var url = window.location.href;
             var pattern = /(.*\/{2})(.*?\/)(.*)/i;
             var result = url.match(pattern);

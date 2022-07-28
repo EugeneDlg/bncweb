@@ -11,7 +11,13 @@ from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList, User
 
 from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
-from .bnc_lib import get_data_for_fixture_table
+from .bnc_lib import get_data_for_fixture_table, read_config
+
+CONFIG_PATH = "bnc_config.yml"
+settings = {}
+
+
+settings = read_config(CONFIG_PATH)
 
 
 @login_required(login_url='login')

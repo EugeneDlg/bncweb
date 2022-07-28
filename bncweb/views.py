@@ -9,9 +9,8 @@ from crispy_forms.utils import render_crispy_form
 
 from jsonview.decorators import json_view
 
+
 import pdb
-
-
 
 
 # from .models import Game
@@ -20,6 +19,8 @@ import pdb
 class MyAuthForm(AuthenticationForm):
     required_css_class = "myfield"
     nonfield_css_class = "myerror"
+
+
 
 
 @json_view
