@@ -6,9 +6,13 @@ from .forms import SignUpForm
 from django.http import JsonResponse
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
-
 from jsonview.decorators import json_view
+from ..game.bnc_lib import read_config
+from ..game.bnc_lib import validate_db_user
 
+CONFIG_PATH = "bnc_config.yml"
+settings = {}
+settings = read_config(CONFIG_PATH)
 
 import pdb
 
@@ -19,8 +23,6 @@ import pdb
 class MyAuthForm(AuthenticationForm):
     required_css_class = "myfield"
     nonfield_css_class = "myerror"
-
-
 
 
 @json_view
@@ -35,12 +37,13 @@ def signup_view(request):
             # user.email = form.cleaned_data["email"]
             form.save()
             username = form.cleaned_data.get('username')
+            password = form.cleaned_data["password1"]
             signup_user = User.objects.get(username=username)
             # user_group = Group.objects.get(name='User')
             # user_group.user_set.add(signup_user)
-            # Game.create_db_user(login, password1)
-            # Game.create_user_privileges(login, db_user)
-            print("try");
+            validate_db_user(username, "create", settings)  # for compatibility with Tkinter version
+            create_db_user(username, password, settings)  # for compatibility with Tkinter version
+            create_user_privileges(login, db_user)
             return {'success': True}
         ctx = {}
         ctx.update(csrf(request))
@@ -54,7 +57,6 @@ def signup_view(request):
 
 
 def login_view(request):
-    fl = False
     if request.method == 'POST':
         form = MyAuthForm(data=request.POST)
         if form.is_valid():
@@ -67,12 +69,8 @@ def login_view(request):
             # return render(request, 'home.html', {'capacity': request.game.capacity})
             else:
                 return redirect('signup')
-        else:
-            fl = True
     else:
         form = AuthenticationForm()
-    if fl:
-        return render(request, 'login.html', {'form': form})
     return render(request, 'login.html', {'form': form})
 
 

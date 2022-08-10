@@ -14,6 +14,7 @@ $.ajax({
     data: $(this).serialize(),
     success: function(data) {
         if (!(data.success)) {
+        alert ("SUCCESS");
     	var form_without_button = data['form_html'].replace(/<form .*?>/, "");
     	form_without_button = form_without_button.replace(/<\/form>/, "");
     	var form_with_button = form_without_button + "<button class=\"form_auth_button\" type=\"submit\" name=\"button\" >Create user</button>";
