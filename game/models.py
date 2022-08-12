@@ -25,12 +25,21 @@ class Game(models.Model):
     upper_poster = models.CharField(max_length=250, null=True)
     result_code = models.CharField(max_length=250, null=True)
 
+
+class Privileges(models.Model):
+    username = models.ForeignKey(User, to_field="username", on_delete=models.CASCADE)
+    create_other = models.BooleanField(default=False)
+    modify_self = models.BooleanField(default=False)
+    modify_other = models.BooleanField(default=False)
+    delete_self = models.BooleanField(default=False)
+    delete_other = models.BooleanField(default=False)
+
     class Meta:
-        ordering = ['game_id']
-        db_table = 'game'
+        ordering = ['id']
+        db_table = 'privileges'
 
     def __str__(self):
-        return self.game_id
+        return self.username
 
 
 class MyHistory(models.Model):

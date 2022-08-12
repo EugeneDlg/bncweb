@@ -40,6 +40,7 @@
       </html>
   db_connection_string_prefix: postgresql+psycopg2://
   db_socket: rtrdb.cnreopapz1wl.us-east-1.rds.amazonaws.com:5432
+  db_name: bnc
   default_db_user: bnc_default
   default_db_password: Ym5jZGZsdDEh
   smtp_address: smtp.mail.ru
