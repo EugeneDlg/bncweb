@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
-
 {% load static %}
-
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'dualgame.css' %}"/>{% endblock %}
 {% block title %}
 	Dual BnC Game
 {% endblock %} 
@@ -84,11 +83,13 @@
       </div>
     </form>
     <br>
-    <div id="wait" style="font-size: 120%; color: grey; text-align: center; font-family: cursive;"><i>Wait...</i></div>
+    <div id="wait" ><i>Wait...</i></div>
   </div>
 </div>
 <div class="center">
   Attempts: {{ game.attempts }}
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="{% static 'dualgame.js' %}"></script>
 {% endblock %}
 

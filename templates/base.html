@@ -1,5 +1,5 @@
-{% load static %}
 <!doctype html>
+{% load static %}
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -11,104 +11,9 @@
       rel="stylesheet">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-    <title>{% block title %} Bulls and Cows {% endblock %}</title>
-    <style>
-      .center {
-        position: fixed;
-        bottom: 20px;
-        width:100%;
-        text-align:center;
-      }
-      .err_input {border-color:red;}
-      .err_label {font-size: 80%; color: red;}
-      .form-inactive {
-         color: grey;
-      }
-
-      .game_broken {
-        color: red;
-        font-weight: bold;
-      }
-      .my_win {
-        color: green;
-        font-weight: bold;
-        font-size: 110%;
-      }
-      .your_win {
-        color: blue;
-        font-weight: bold;
-        font-size: 110%;
-      }
-      .tie {
-        color: yellow;
-        font-weight: bold;
-        font-size: 110%;
-      }
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-      var inputs = ['my_cows', 'my_bulls', 'your_guess'];
-      function remove_warnings(){
-        for (var i=0; i < inputs.length; i++){
-          var item = document.getElementById(inputs[i]);
-          $(item).removeClass('err_input');
-          $('#error_'+item.name).remove();
-        };
-      }
-      $(document).ready(function () {
-        wait_item = document.getElementById('wait');
-        $("#game_form").on("submit", function(){
-            wait_item.style.display = '';
-            {% if not game.game_started %}
-              return true;
-            {% endif %}
-            var dict0 = $(this).serialize();
-            var dict_json = dict0 + '&flag=0';
-            csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-            $.ajax({
-                url: '/home/dualgame/',
-                method: 'post',
-                dataType: 'json',
-                data: dict_json,
-                success: function(data){
-                    remove_warnings();
-                    if (data.is_OK == false){
-                                          wait_item.style.display = 'none';
-                      tag_items = data.items;
-                      for(var key in tag_items) {
-                        item = document.getElementById(key);
-                        $(item).addClass('err_input');
-                        $(item).after('<div class=\'err_label\' id=\'error_' + item.name+ '\'>' + tag_items[key] + '</div>');
-                      };
-                    }
-                    else {
-                        post_dict = {'csrfmiddlewaretoken': csrfmiddlewaretoken, 'flag':1};
-                        $('body').load('/home/dualgame/', post_dict);
-                        $('body').on('load', function() {
-                                            wait_item.style.display = 'none';});
-                    };
-                },
-                error: function (response) {
-                      wait_item.style.display = 'none';
-                      console.log(response.responseJSON.errors);
-                }
-            });
-            return false;
-        });
-        {% if game.game_started == True %}
-        var count = 0;
-        var f = document.getElementById('my_guess');
-        var IntervalId = setInterval(function() {
-          if (count++ < 10){
-            f.style.fontWeight = (f.style.fontWeight == 'bold' ? 'normal' : 'bold');
-          }else{
-            clearInterval(IntervalId);
-          };
-        }, 200);
-        {% endif %}
-        wait_item.style.display = 'none';
-      })
-    </script>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}"/>
+    {% block css %}{% endblock %}
   </head>
 
   <body>

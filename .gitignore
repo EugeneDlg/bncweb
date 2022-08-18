@@ -3,3 +3,4 @@ frotz/
 tttt
 log
 !log/tttt
+**/__pycache__/

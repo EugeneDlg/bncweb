@@ -7,27 +7,32 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
+# from jsonview.decorators import json_view
+
+
 from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList, User
 
 from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
-from .bnc_lib import get_data_for_fixture_table
-from ..bncweb.views import settings
+from .bnc_lib import get_data_for_fixture_table, read_config
 
+import pdb
 
+CONFIG_PATH = "bnc_config.yml"
+settings = {}
+settings = read_config(CONFIG_PATH)
 
 
 @login_required(login_url='login')
 def home(request):
     if request.method == "POST":
-        print("POST home")
         try:
             game = Game.objects.get(game_id=request.session.session_key)
         except Exception:
             raise
     else:
-        print("GET home")
         try:
+            # breakpoint()
             game = Game.objects.get(game_id=request.session.session_key)
         except Game.DoesNotExist:
             game = Game.objects.create(
@@ -86,72 +91,76 @@ def dual_game(request):
             game.save()
             return render(request, 'dualgame.html', {'game': game})
         else:
-            if not flag:
-                my_cows_entered = request.POST["my_cows"]
-                my_bulls_entered = request.POST["my_bulls"]
-                if game.dual_game:
-                    your_guess_entered = request.POST["your_guess"]
-                try:
-                    validate_cows_and_bulls(my_cows_entered, my_bulls_entered, game.capacity)
-                    validate_your_guess(game.capacity, your_guess_entered)
-                    print("validate_cows_and_bulls")
-                except BnCException as exc:
-                    response = {"is_OK": False, "items": exc.msg}
-                    return JsonResponse(response)
-                except Exception as exc:
-                    raise exc
-                else:
-                    game.my_cows = int(my_cows_entered)
-                    game.my_bulls = int(my_bulls_entered)
-                    game.your_guess = str(your_guess_entered)
-                    game.save()
-                    return JsonResponse({"is_OK": True})
-            # result_code = None
-            if my_history.items is None:
-                game.my_history_list = []
-            else:
-                game.my_history_list = my_history.items
-            if total_set.set is None:
-                game.total_set = set()
-            else:
-                game.total_set = set(total_set.set)
-            try:
-                my_result = make_my_guess(game)
-            except FinishedNotOKException as exc:
-                game.result_code = 0
-                game.save()
-                finish_dual_game(game, 0)
-                return render(request, 'dualgame.html', {'game': game})
-            my_history.items = game.my_history_list
-            my_history.save()
-            total_set.set = list(game.total_set)
-            total_set.save()
-            del game.my_history_list
-            del game.total_set
+
+            my_cows_entered = request.POST["my_cows"]
+            my_bulls_entered = request.POST["my_bulls"]
             if game.dual_game:
-                if your_history.items is None:
-                    game.your_history_list = []
-                else:
-                    game.your_history_list = your_history.items
-                your_result = make_your_guess(game, game.your_guess)
-                your_history.items = game.your_history_list
-                your_history.save()
-                del game.your_history_list
+                your_guess_entered = request.POST["your_guess"]
+            try:
+                validate_cows_and_bulls(my_cows_entered, my_bulls_entered, game.capacity)
+                validate_your_guess(game.capacity, your_guess_entered)
+                print("validate_cows_and_bulls")
+            except BnCException as exc:
+                response = {"success": False, "items": exc.msg}
+                return JsonResponse(response)
+            except Exception as exc:
+                raise exc
             else:
-                your_result = False
-            game.save()
-            if my_result and not your_result:
-                game.result_code = 1
-            if your_result and not my_result:
-                game.result_code = 2
-            if your_result and my_result:
-                game.result_code = 3
-            if game.result_code is not None:
-                finish_dual_game(request, game)
-            return render(request, 'dualgame.html', {'game': game,
-                                                     'my_items': my_history.items, 'your_items': your_history.items})
+                game.my_cows = int(my_cows_entered)
+                game.my_bulls = int(my_bulls_entered)
+                game.your_guess = str(your_guess_entered)
+                # game.save()
+                # result_code = None
+                if my_history.items is None:
+                    game.my_history_list = []
+                else:
+                    game.my_history_list = my_history.items
+                if total_set.set is None:
+                    game.total_set = set()
+                else:
+                    game.total_set = set(total_set.set)
+                try:
+                    my_result = make_my_guess(game)
+                except FinishedNotOKException as exc:
+                    game.result_code = 0
+                    game.save()
+                    finish_dual_game(game, 0)
+                    return render(request, 'dualgame.html', {'game': game})
+                my_history.items = game.my_history_list
+                my_history.save()
+                total_set.set = list(game.total_set)
+                total_set.save()
+                del game.my_history_list
+                del game.total_set
+                if game.dual_game:
+                    if your_history.items is None:
+                        game.your_history_list = []
+                    else:
+                        game.your_history_list = your_history.items
+                    your_result = make_your_guess(game, game.your_guess)
+                    your_history.items = game.your_history_list
+                    your_history.save()
+                    del game.your_history_list
+                else:
+                    your_result = False
+
+                if my_result and not your_result:
+                    game.result_code = 1
+                if your_result and not my_result:
+                    game.result_code = 2
+                if your_result and my_result:
+                    game.result_code = 3
+                game.save()
+                if game.result_code is not None:
+                    finish_dual_game(request, game)
+                # return render(request, 'dualgame.html', {'game': game,
+                #                                          'my_items': my_history.items, 'your_items': your_history.items})
+                response = {"success": True, 'game': game,
+                            'my_items': my_history.items, 'your_items': your_history.items}
+                return JsonResponse(response)
     else:
         print("GET dualgame")
+        # create_user_privileges(request)
         try:
             game = Game.objects.get(game_id=request.session.session_key)
             my_history = MyHistory.objects.get(game_id=request.session.session_key)
@@ -262,3 +271,15 @@ def write_fl_to_db(request, game):
         duration=math.ceil((finish_timestamp - start_timestamp) / 60)
     )
     game.save()
+
+
+# def create_user_privileges(request):
+#     privileges = Privileges.objects.create(
+#         username=request.user,
+#         create_other=False,
+#         modify_self = False,
+#         modify_other = False,
+#         delete_self = False,
+#         delete_other = False
+#     )
+#     privileges.save()

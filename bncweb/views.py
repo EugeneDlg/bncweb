@@ -2,22 +2,22 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, HttpResponse
+from django.contrib.auth.models import User
 from .forms import SignUpForm
+
 from django.http import JsonResponse
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from jsonview.decorators import json_view
-from ..game.bnc_lib import read_config
-from ..game.bnc_lib import validate_db_user
+from .bnc_lib import read_config, validate_db_user, create_db_user
+
+# from .models import Privileges
 
 CONFIG_PATH = "bnc_config.yml"
 settings = {}
 settings = read_config(CONFIG_PATH)
 
 import pdb
-
-
-# from .models import Game
 
 
 class MyAuthForm(AuthenticationForm):
@@ -43,7 +43,7 @@ def signup_view(request):
             # user_group.user_set.add(signup_user)
             validate_db_user(username, "create", settings)  # for compatibility with Tkinter version
             create_db_user(username, password, settings)  # for compatibility with Tkinter version
-            create_user_privileges(login, db_user)
+
             return {'success': True}
         ctx = {}
         ctx.update(csrf(request))
@@ -130,5 +130,5 @@ def test_ajax(request):
     return render(request, "testajax.html", {'aa': prefix})
 
 
-def testpage(request):
-    return render(request, "testpage.html")
+
+
