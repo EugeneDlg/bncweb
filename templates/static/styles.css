@@ -67,10 +67,18 @@ input:focus {
     border: none;
     cursor: pointer;
 }
-
 .center {
     position: fixed;
     bottom: 20px;
     width:100%;
     text-align:center;
+}
+span{
+    font-weight: normal;
+    color: red;
+    font-size: 10px;
+}
+.invalid-feedback::before {
+    content: "\a";
+    white-space: pre;
 }

@@ -3,21 +3,18 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.models import User
-from .forms import SignUpForm
-
 from django.http import JsonResponse
 from django.template.context_processors import csrf
+
 from crispy_forms.utils import render_crispy_form
 from jsonview.decorators import json_view
-from .bnc_lib import read_config, validate_db_user, create_db_user
 
-# from .models import Privileges
+from .bnc_lib import read_config, validate_db_user, create_db_user
+from .forms import SignUpForm
+
 
 CONFIG_PATH = "bnc_config.yml"
-settings = {}
 settings = read_config(CONFIG_PATH)
-
-import pdb
 
 
 class MyAuthForm(AuthenticationForm):
@@ -48,7 +45,6 @@ def signup_view(request):
         ctx = {}
         ctx.update(csrf(request))
         form_html = render_crispy_form(form, context=ctx)
-        print("ctx = {}")
         return {'success': False, 'form_html': form_html}
 
     else:
