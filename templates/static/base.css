@@ -1,0 +1,11 @@
+.center {
+	position: fixed;
+	bottom: 20px;
+	width:100%;
+	text-align:center;
+}
+.err_input {border-color:red;}
+.err_label {font-size: 80%; color: red;}
+.form-inactive {
+	color: grey;
+}
