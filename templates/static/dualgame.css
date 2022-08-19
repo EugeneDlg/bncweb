@@ -1,0 +1,26 @@
+.game_broken {
+	color: red;
+	font-weight: bold;
+}
+.my_win {
+	color: green;
+	font-weight: bold;
+	font-size: 110%;
+}
+.your_win {
+	color: blue;
+	font-weight: bold;
+	font-size: 110%;
+}
+.tie {
+	color: yellow;
+	font-weight: bold;
+	font-size: 110%;
+}
+
+#wait {
+	font-size: 120%;
+       	color: grey; 
+	text-align: center; 
+	font-family: cursive;
+}
