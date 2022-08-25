@@ -92,39 +92,35 @@ def validate_game_data(request):
     return JsonResponse(response)
 
 
-def test_ajax(request):
-    if request.method == 'POST':
-        flag = int(request.POST["flag"])
-        print(flag)
-        if not flag:
-
-            print("testajax post flag false")
-            login = request.POST["login"]
-            password = request.POST["password"]
-
-            if login == "1":
-                response = {
-                    'is_': False
-                }
-            else:
-                response = {
-                    'is_': True
-                }
-            return JsonResponse(response)
-        print("testajax post flag true")
-        return render(request, "testajax.html", {'aa': "QQQQQQQ"})
-    print("testajax get")
-    response = {
-        'text': False
-    }
-    flag = request.POST.get("login", False)
-    print("flag", flag)
-    if flag:
-        prefix = "QQQQQQ"
-    else:
-        prefix = "ZZZZZZ"
-    return render(request, "testajax.html", {'aa': prefix})
-
-
-
-
+# def test_ajax(request):
+#     if request.method == 'POST':
+#         flag = int(request.POST["flag"])
+#         print(flag)
+#         if not flag:
+#
+#             print("testajax post flag false")
+#             login = request.POST["login"]
+#             password = request.POST["password"]
+#
+#             if login == "1":
+#                 response = {
+#                     'is_': False
+#                 }
+#             else:
+#                 response = {
+#                     'is_': True
+#                 }
+#             return JsonResponse(response)
+#         print("testajax post flag true")
+#         return render(request, "testajax.html", {'aa': "QQQQQQQ"})
+#     print("testajax get")
+#     response = {
+#         'text': False
+#     }
+#     flag = request.POST.get("login", False)
+#     print("flag", flag)
+#     if flag:
+#         prefix = "QQQQQQ"
+#     else:
+#         prefix = "ZZZZZZ"
+#     return render(request, "testajax.html", {'aa': prefix})

@@ -5,10 +5,12 @@ from . import views
 
 urlpatterns = [
 
-    path('dualgame/', views.dual_game, name='dualgame'),
+    path('dualgame', views.dual_game, name='dualgame'),
     path('singlegame.html', views.single_game, name='singlegame'),
-    path('new_game', views.new_game, name="new_game"),
+    path('newgame', views.new_game, name="new_game"),
     path('fixturelist', views.fixture_list, name="fixture_list"),
-    path('users', views.manage_user_profiles, name="users"),
+    path('edit', views.edit_profile, name="edit_profile"),
+    path('changepassword', views.change_password, name="change_password"),
+    path('delete', views.delete_profile, name="delete_profile"),
     path('', views.home, name='home'),
 ]

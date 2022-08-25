@@ -11,7 +11,7 @@ from jsonview.decorators import json_view
 from crispy_forms.utils import render_crispy_form
 
 from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList, User
-from .form import UserManageForm
+from .form import UserEditForm
 
 from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
@@ -281,11 +281,13 @@ def write_fl_to_db(request, game):
 #     privileges.save()
 
 
+
+
 @login_required(login_url='login')
 @json_view
-def manage_user_profiles(request):
+def edit_profile(request):
     if request.method == "POST":
-        form = UserManageForm(request.POST)
+        form = UserEditForm(request.POST)
         if form.is_valid():
             form.save()
             return {"success": True}
@@ -293,5 +295,45 @@ def manage_user_profiles(request):
         form_html = render_crispy_form(form, context=context)
         return {"success": False, "form_html": form_html}
     else:
-        form = UserManageForm()
-    return render(request, "usermanage.html", {"form": form})
+        breakpoint()
+        user = request.user
+        form = UserEditForm(instance=request.user)
+    return render(request, "edit.html", {"form": form})
+
+
+@login_required(login_url='login')
+@json_view
+def delete_profile(request):
+    pass
+    # if request.method == "POST":
+    #     form = UserEditForm(request.POST)
+    #     if form.is_valid():
+    #         form.save()
+    #         return {"success": True}
+    #     context = csrf(request)
+    #     form_html = render_crispy_form(form, context=context)
+    #     return {"success": False, "form_html": form_html}
+    # else:
+    #     breakpoint()
+    #     user = request.user
+    #     form = UserEditForm(instance=request.user)
+    # return render(request, "usermanage.html", {"form": form})
+
+
+@login_required(login_url='login')
+@json_view
+def change_password(request):
+    pass
+    # if request.method == "POST":
+    #     form = UserEditForm(request.POST)
+    #     if form.is_valid():
+    #         form.save()
+    #         return {"success": True}
+    #     context = csrf(request)
+    #     form_html = render_crispy_form(form, context=context)
+    #     return {"success": False, "form_html": form_html}
+    # else:
+    #     breakpoint()
+    #     user = request.user
+    #     form = UserEditForm(instance=request.user)
+    # return render(request, "usermanage.html", {"form": form})
