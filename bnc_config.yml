@@ -43,6 +43,7 @@
   db_name: bnc
   default_db_user: bnc_default
   default_db_password: Ym5jZGZsdDEh
+  common_db_user: bnc_user
   smtp_address: smtp.mail.ru
   bnc_email: Bulls.And.Cows@mail.ru
   ssl_port: 465
