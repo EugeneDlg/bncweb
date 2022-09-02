@@ -8,13 +8,13 @@ $(document).ready(function () {
     upper_notice.attr("style", "color: green; font-weight: bold;");
 $("#signup_form").on("submit", function(){
 $.ajax({
-    url: "{% url 'signup' %}",
+    url: $("#signup_form").data("url"),
     dataType: 'json',
     method: 'post',
     data: $(this).serialize(),
     success: function(data) {
         if (!(data.success)) {
-        alert ("SUCCESS");
+        alert ("data.success");
     	var form_without_button = data['form_html'].replace(/<form .*?>/, "");
     	form_without_button = form_without_button.replace(/<\/form>/, "");
     	var form_with_button = form_without_button + "<button class=\"form_auth_button\" type=\"submit\" name=\"button\" >Create user</button>";
@@ -31,7 +31,7 @@ $.ajax({
             var pattern = /(.*\/{2})(.*?\/)(.*)/i;
             var result = url.match(pattern);
             var new_url = result[1] + result[2] + "login";
-            setTimeout(()=>{window.location.replace(new_url);}, 3000);
+            setTimeout(()=>{window.location.replace(new_url);}, 5000);
 
         }
     },

@@ -8,6 +8,7 @@ function remove_warnings(){
 }
 $(document).ready(function () {
     wait_item = document.getElementById('wait');
+    wait_item.style.display = 'none';
     $("#game_form").on("submit", function(){
         wait_item.style.display = '';
         {% if not game.game_started %}

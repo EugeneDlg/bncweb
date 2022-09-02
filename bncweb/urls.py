@@ -27,7 +27,7 @@ urlpatterns = [
     # path('login/', views.loginView, name="login"),
     # path('', include('game.urls')),
     path('home/', include('game.urls')),
-    path('signup/', views.signup_view, name="signup"),
+    path(r'signup/', views.signup_view, name="signup"),
     path('login/', views.login_view, name="login"),
     path('signout/', views.signout_view, name="signout"),
     # path(r'.*', views.login_view, name="login"),

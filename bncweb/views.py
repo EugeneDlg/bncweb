@@ -9,7 +9,7 @@ from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from jsonview.decorators import json_view
 
-from .bnc_lib import read_config, validate_db_user, create_db_user
+from .bnc_lib import read_config, validate_db_user, create_db_user, send_email
 from .forms import SignUpForm
 
 
@@ -33,22 +33,29 @@ def signup_view(request):
             # user.password = form.cleaned_data["password1"]
             # user.email = form.cleaned_data["email"]
             form.save()
-            username = form.cleaned_data.get('username')
+            username = form.cleaned_data["username"]
+            firstname = form.cleaned_data["username"]
+            lastname = form.cleaned_data["username"]
             password = form.cleaned_data["password1"]
+            email = form.cleaned_data["email"]
             signup_user = User.objects.get(username=username)
             # user_group = Group.objects.get(name='User')
             # user_group.user_set.add(signup_user)
-            validate_db_user(username, "create", settings)  # for compatibility with Tkinter version
-            create_db_user(username, password, settings)  # for compatibility with Tkinter version
-
+            validate_db_user(settings, username, "create")  # for compatibility with Tkinter version
+            create_db_user(settings, username, password)  # for compatibility with Tkinter version
+            replace_list = (("FIRSTNAME", firstname), ("LASTNAME", lastname))
+            # try:
+            send_email(settings, email, "welcome", replace_list)
+            # except Exception as exc:
+            #     raise exc
             return {'success': True}
         ctx = {}
         ctx.update(csrf(request))
         form_html = render_crispy_form(form, context=ctx)
         return {'success': False, 'form_html': form_html}
-
     else:
         form = SignUpForm()
+        # breakpoint()
     return render(request, 'signup.html', {'form': form})
 
 

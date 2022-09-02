@@ -124,7 +124,7 @@ def dual_game(request):
             except FinishedNotOKException as exc:
                 game.result_code = 0
                 game.save()
-                finish_dual_game(game, 0)
+                finish_dual_game(request, game)
                 return render(request, 'dualgame.html', {'game': game})
             my_history.items = game.my_history_list
             my_history.save()
