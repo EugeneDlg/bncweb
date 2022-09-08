@@ -161,18 +161,18 @@ def dual_game(request):
             game = Game.objects.get(game_id=request.session.session_key)
             my_history = MyHistory.objects.get(game_id=request.session.session_key)
             your_history = YourHistory.objects.get(game_id=request.session.session_key)
+        except Game.DoesNotExist:
+            game = Game.objects.create(
+                game_id=request.session.session_key,
+                # capacity=4,
+                game_started=False,
+                attempts=0
+            )
+            game.save()
         except Exception:
             raise
         if game.attempts == 0:
             return redirect('home')
-        # except Game.DoesNotExist:
-        #     game = Game.objects.create(
-        #         game_id=request.session.session_key,
-        #         # capacity=4,
-        #         game_started=False,
-        #         attempts=0
-        #     )
-        #     game.save()
     return render(request, 'dualgame.html', {'game': game,
                                              'my_items': my_history.items, 'your_items': your_history.items})
 

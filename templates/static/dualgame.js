@@ -11,9 +11,9 @@ $(document).ready(function () {
     wait_item.style.display = 'none';
     $("#game_form").on("submit", function(){
         wait_item.style.display = '';
-        {% if not game.game_started %}
+        if(!game_started){
             return true;
-        {% endif %}
+        }
         var dict0 = $(this).serialize();
         var dict_json = dict0 + '&flag=0';
         csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
@@ -24,7 +24,7 @@ $(document).ready(function () {
             data: dict_json,
             success: function(data){
                 remove_warnings();
-                if (data.is_OK == false){
+                if (data.success == false){
                     wait_item.style.display = 'none';
                     tag_items = data.items;
                     for(var key in tag_items) {
@@ -47,16 +47,16 @@ $(document).ready(function () {
         });
         return false;
     });
-    {% if game.game_started == True %}
-    var count = 0;
-    var f = document.getElementById('my_guess');
-    var IntervalId = setInterval(function() {
-        if (count++ < 10){
-            f.style.fontWeight = (f.style.fontWeight == 'bold' ? 'normal' : 'bold');
-        }else{
-            clearInterval(IntervalId);
-        };
-    }, 200);
-    {% endif %}
+    if (game_started){
+        var count = 0;
+        var f = document.getElementById('my_guess');
+        var IntervalId = setInterval(function() {
+            if (count++ < 10){
+                f.style.fontWeight = (f.style.fontWeight == 'bold' ? 'normal' : 'bold');
+            }else{
+                clearInterval(IntervalId);
+            };
+        }, 200);
+    };
     wait_item.style.display = 'none';
 })

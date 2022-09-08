@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
 
-    path('dualgame', views.dual_game, name='dualgame'),
+    path('dualgame/', views.dual_game, name='dualgame'),
     path('singlegame.html', views.single_game, name='singlegame'),
     path('newgame', views.new_game, name="new_game"),
     path('fixturelist', views.fixture_list, name="fixture_list"),
