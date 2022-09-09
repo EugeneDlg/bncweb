@@ -281,8 +281,6 @@ def write_fl_to_db(request, game):
 #     privileges.save()
 
 
-
-
 @login_required(login_url='login')
 @json_view
 def edit_profile(request):
@@ -295,7 +293,7 @@ def edit_profile(request):
         form_html = render_crispy_form(form, context=context)
         return {"success": False, "form_html": form_html}
     else:
-        breakpoint()
+        # breakpoint()
         user = request.user
         form = UserEditForm(instance=request.user)
     return render(request, "edit.html", {"form": form})

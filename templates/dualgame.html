@@ -24,7 +24,7 @@
         {% endif %}
       </div>
     </div>
-    <form id="game_form" method="post" {% if not game.game_started %} class="form-inactive" {% endif %}>
+    <form id="game_form" data-url="{% url 'dualgame' %}" method="post" {% if not game.game_started %} class="form-inactive" {% endif %}>
     {% csrf_token %}
       <div class="row">
         <div class="col-lg-6 text-center">
@@ -90,7 +90,6 @@
   Attempts: {{ game.attempts }}
 </div>
 <script type="text/javascript">{% if game.game_started %} var game_started = true; {% else %} var game_started = false; {% endif %}</script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="{% static 'dualgame.js' %}"></script>
 {% endblock %}
 

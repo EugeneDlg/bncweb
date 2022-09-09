@@ -18,7 +18,7 @@ $(document).ready(function () {
         var dict_json = dict0 + '&flag=0';
         csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
         $.ajax({
-            url: '/home/dualgame/',
+            url: $("#game_form").data("url"),
             method: 'post',
             dataType: 'json',
             data: dict_json,

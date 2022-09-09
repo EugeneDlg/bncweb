@@ -1,5 +1,5 @@
-var success_text = "The user is successfully created! " + '<i class="material-icons">done</i>' + " Forwarding to login page...";
-var initial_text = "Edit ypur personal information";
+var success_text = "Changes saved " + '<i class="material-icons">done</i>' + " Forwarding to login page...";
+var initial_text = "Edit your personal information";
 
 $(document).ready(function () {
     var upper_notice = $('#upper_notice');
@@ -8,7 +8,7 @@ $(document).ready(function () {
     upper_notice.attr("style", "color: green; font-weight: bold;");
 $("#edit_form").on("submit", function(){
 $.ajax({
-    url: "{% url 'edit_profile' %}",
+    url: $("#edit_form").data("url"),
     dataType: 'json',
     method: 'post',
     data: $(this).serialize(),
