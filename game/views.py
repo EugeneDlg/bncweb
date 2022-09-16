@@ -285,7 +285,7 @@ def write_fl_to_db(request, game):
 @json_view
 def edit_profile(request):
     if request.method == "POST":
-        form = UserEditForm(request.POST)
+        form = UserEditForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             return {"success": True}
