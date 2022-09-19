@@ -1,5 +1,5 @@
-var initial_text = "<h2>" + upper_label + "</h2>";
-var success_text = initial_text + "<br>" + "<h3>Changes saved <i class=\"material-icons\">done</i></h3>";
+var initial_text = "<h1>" + upper_label + "</h1>";
+var success_text = initial_text + "<br>" + "<h2>Changes saved <i class=\"material-icons\">done</i>";
 
 
 $(document).ready(function () {
