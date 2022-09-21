@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.context_processors import csrf
+from django.contrib.auth import update_session_auth_hash
 
 from jsonview.decorators import json_view
 from crispy_forms.utils import render_crispy_form
@@ -323,7 +324,8 @@ def changepassword(request):
     if request.method == "POST":
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            update_session_auth_hash(request, user)
             return {"success": True}
         context = csrf(request)
         form_html = render_crispy_form(form, context=context)
