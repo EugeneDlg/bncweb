@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.contrib.auth.views import P
+from django.contrib.auth import views as password_views
 # from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # from django.conf import settings
 # from django.conf.urls.static import static
@@ -25,14 +25,16 @@ from . import views
 
 
 urlpatterns = [
-
-    # path('login/', views.loginView, name="login"),
-    # path('', include('game.urls')),
+    path('admin/', admin.site.urls),
     path('home/', include('game.urls')),
     path('signup/', views.signup_view, name="signup"),
     path('login/', views.login_view, name="login"),
+    path('accounts/login/', views.login_view, name="login"),
     path('signout/', views.signout_view, name="signout"),
-    # path(r'.*', views.login_view, name="login"),
+    path('reset_password/', password_views.PasswordResetView.as_view(), name="reset_password"),
+    path('password_reset_done/', password_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
+    path('password_reset/<uidb64>/<token>/', password_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path('password_reset_complete', password_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'))),
     path('', include('game.urls')),
 ]
