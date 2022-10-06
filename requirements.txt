@@ -1,0 +1,11 @@
+asgiref==3.5.0
+backports.zoneinfo==0.2.1
+Django==4.0.3
+django-crispy-forms==1.14.0
+django-jsonview==2.0.0
+greenlet==1.1.2
+passlib==1.7.4
+psycopg2-binary==2.9.3
+PyYAML==6.0
+SQLAlchemy==1.4.35
+sqlparse==0.4.2
