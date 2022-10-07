@@ -29,12 +29,15 @@ urlpatterns = [
     path('home/', include('game.urls')),
     path('signup/', views.signup_view, name="signup"),
     path('login/', views.login_view, name="login"),
-    path('accounts/login/', views.login_view, name="login"),
     path('signout/', views.signout_view, name="signout"),
-    path('reset_password/', password_views.PasswordResetView.as_view(), name="reset_password"),
-    path('password_reset_done/', password_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
-    path('password_reset/<uidb64>/<token>/', password_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
-    path('password_reset_complete', password_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path('reset_password/', password_views.PasswordResetView.as_view(
+        template_name="reset_password.html"), name="reset_password"),
+    path('password_reset_done/', password_views.PasswordResetDoneView.as_view(
+        template_name="reset_password_done.html"), name="password_reset_done"),
+    path('password_reset/<uidb64>/<token>/', password_views.PasswordResetConfirmView.as_view(
+        template_name="reset_password_confirm.html"), name="password_reset_confirm"),
+    path('password_reset_complete', password_views.PasswordResetCompleteView.as_view(
+        template_name="reset_password_complete.html"), name="password_reset_complete"),
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'))),
     path('', include('game.urls')),
 ]
