@@ -2,7 +2,8 @@ var success_text = "The user is successfully created! " + '<i class="material-ic
 var initial_text = "Please input the following information to create a new account";
 var div_avatar = "#div_id_avatar";
 var avatar = "id_avatar";
-var signup_form = "#signup_form";
+var this_form = "#signup_form";
+var max_file_size = 2000000;
 
 function fileValidation() {
     var fileInput = document.getElementById(avatar);
@@ -16,7 +17,7 @@ function fileValidation() {
         fileInput.value = '';
         return false;
     }
-    if(fileInput.files[0].size > 1000000){
+    if(fileInput.files[0].size > max_file_size){
         $(div_avatar).addClass('invalid_file_size');
         fileInput.value = '';
         return false;
@@ -51,14 +52,14 @@ $(document).ready(function () {
     upper_notice.html(initial_text);
     upper_notice.attr("style", "color: green; font-weight: bold;");
 
-    $(signup_form).on("submit", function(){
+    $(this_form).on("submit", function(){
         removeWarnings();
         if (!fileValidation()){
             return false;
         }
         var formData = new FormData(this);
         $.ajax({
-            url: $(signup_form).data("url"),
+            url: $(this_form).data("url"),
             type: 'POST',
             data: formData,
             cache:false,
@@ -69,7 +70,7 @@ $(document).ready(function () {
                 var form_without_button = data['form_html'].replace(/<form .*?>/, "");
                 form_without_button = form_without_button.replace(/<\/form>/, "");
                 var form_with_button = form_without_button + "<button class=\"form_auth_button\" type=\"submit\" name=\"button\" >Create user</button>";
-                $(signup_form).html(form_with_button);
+                $(this_form).html(form_with_button);
                 $('#hint_id_password2').text("");
                 $(div_avatar).addClass("file_attention");
                 }
