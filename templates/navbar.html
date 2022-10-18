@@ -1,18 +1,24 @@
-<nav class="navbar navbar-light bg-dark">
+<nav class="navbar navbar-light bg-dark navbar-expand-sm">
     <button class="navbar-toggler bg-light" data-toggle="collapse" data-target="#navbar"><span class="navbar-toggler-icon"></span></button>
     <div id="navbar" class="collapse navbar-collapse justify-content-between">
         <ul class="navbar-nav">
-            {% if request.user.is_authenticated %}
-                <li class="nav-item"><span class="nav-link text-light text-uppercase font-weight-bold px-3">Welcome, {{ request.user.first_name }}! <i class="material-icons cart-icon">account_circle</i></span></li>
-                <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'new_game' %}">New game</a></li>
-                <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'edit' %}">Edit profile</a></li>
-                <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'changepassword' %}">Change password</a></li>
-                <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'delete' %}">Delete profile</a></li>
-                <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="">Settings</a></li>
-                <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'signout' %}">Sign Out<i class="material-icons cart-icon">exit_to_app</i></a></li>
-            {% endif %}
+        {% if request.user.is_authenticated %}
+            <li class="nav-item"><span class="nav-link text-light text-uppercase font-weight-bold px-3">Welcome, {{ request.user.first_name }}! <i class="material-icons cart-icon">account_circle</i></span></li>
+        {% endif %}
+        <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'home' %}">Home</a></li>
+        {% if request.user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'new_game' %}">New game</a></li>
+            <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="">Settings</a></li>
             <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'fixture_list' %}">Fixture List</a></li>
-            <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="">About</a></li>
+            <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'edit' %}">Edit profile</a></li>
+            <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'changepassword' %}">Change password</a></li>
+            <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'delete' %}">Delete profile</a></li>
+
+        {% endif %}
+             <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'about' %}">About</a></li>
+         {% if request.user.is_authenticated %}
+             <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'signout' %}">Sign Out<i class="material-icons cart-icon">exit_to_app</i></a></li>
+         {% endif %}
         </ul>
     </div>
 </nav>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+
+	<div class="container p-3">
+  	 	<h2 class="font-weight-bold mt-4">About this game</h2>
+		<hr>
+		<p>It's a modified version of classical game Bulls and Cows. One of participants thinks of
+			a number which consists of non-repeatable digits, and the second participant tries
+			to guess the number proposing variants. The first gamer compares the original number
+			and the proposed one and reports to the second gamer two values:
+			the overall amount of the coincident digits (cows) and the amount of the coincident digits
+			which have the right position(bulls).</p>
+  	</div>
+
+{% endblock %}

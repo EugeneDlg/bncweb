@@ -82,3 +82,19 @@ span{
     content: "\a";
     white-space: pre;
 }
+
+.invalid_file_format::after{
+    color: red;
+    content: "Invalid file format. Supported format: jpeg, png, gif";
+}
+
+.invalid_file_size::after{
+    color: red;
+    content: "File size cannot be greater than 1Mb";
+}
+
+.file_attention{
+    border-color: blue;
+    border-style: dotted;
+    border-width: thin;
+}

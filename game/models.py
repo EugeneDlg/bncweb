@@ -1,6 +1,7 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib import auth
 
 
 # Create your models here.
@@ -95,3 +96,18 @@ class Privileges(models.Model):
 
     def __str__(self):
         return self.username
+
+
+# class UserExt(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     avatar = models.ImageField(upload_to="images/")
+#
+#     def __str__(self):
+#         return str(self.user)
+#
+#
+# def create_user_ext(self):
+#     UserExt.objects.create(user=self)
+#
+#
+# auth.models.User.add_to_class('create_user_ext', create_user_ext)

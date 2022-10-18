@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -28,11 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
     'game.apps.GameConfig',
+    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -72,7 +71,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bncweb.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -91,7 +89,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -101,6 +98,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 6}
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -108,8 +106,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'bncweb.validators.UppercaseValidator',
+    }
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -122,11 +122,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # STATICFILES_DIRS = ('/home/eugineer/PythonProjects/BnCweb/bncweb/templates/static',)
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
@@ -136,5 +137,13 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.mail.ru"
+EMAIL_PORT = '465'
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = "Bulls.And.Cows@mail.ru"
+EMAIL_HOST_PASSWORD = os.environ["bnc_email_password"]
+DEFAULT_FROM_EMAIL = "Bulls.And.Cows@mail.ru"

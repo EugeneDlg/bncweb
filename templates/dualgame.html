@@ -29,7 +29,10 @@
       <div class="row">
         <div class="col-lg-6 text-center">
           <div class="card mb-2">
-            <h5 class="card-header">My part</h5>
+            <h5 class="card-header stylered">My part</h5>
+            <div class="card m-1 " >
+              <img class="card-img-top img-fluid" src="/media/images/my_default_av.jpg" alt="My avatar" >
+            </div>
             <div class="card mb-3" ><span id="my_guess">I guess your number is:
               {% if game.my_guess is not None %} {{ game.my_guess }}{% endif %}</span></div>
             <div>Enter the number of cows:  <input type="text" name="my_cows" autofocus maxlength="10" required id="my_cows"
@@ -52,6 +55,13 @@
         <div class="col-lg-6 text-center">
           <div class="card mb-2">
             <h5 class="card-header">Your part</h5>
+            <div class="card m-1" >
+            {% if request.user.extension.avatar.url is not None %}
+              <img class="card-img-top img-fluid" src="{{ request.user.extension.avatar.url }}" alt="Your avatar" >
+            {% else %}
+              <img class="card-img-top img-fluid" src="/media/images/your_default_av.png" alt="Your avatar" >
+            {% endif %}
+            </div>
             <div class="card mb-3"><span>Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="5" required id="your_guess"
                                                                                 {% if not game.game_started %} disabled {% endif %}></span></div>
             <div>You have found qty of cows: {% if game.your_cows is not None %} {{ game.your_cows}} {% endif %}</div>

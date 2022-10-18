@@ -12,14 +12,13 @@ from jsonview.decorators import json_view
 from crispy_forms.utils import render_crispy_form
 
 from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList, User
-from .form import UserEditForm
+from .forms import UserEditForm
 from django.contrib.auth.forms import PasswordChangeForm
 
 from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
 from .bnc_lib import get_data_for_fixture_table, read_config
 
-import pdb
 
 CONFIG_PATH = "bnc_config.yml"
 settings = read_config(CONFIG_PATH)
@@ -34,7 +33,6 @@ def home(request):
             raise
     else:
         try:
-            # breakpoint()
             game = Game.objects.get(game_id=request.session.session_key)
         except Game.DoesNotExist:
             game = Game.objects.create(
@@ -270,7 +268,7 @@ def write_fl_to_db(request, game):
     )
     game.save()
 
-
+# проверить это. почему привилегии создаются в ткинтер-версии, а не здесь
 # def create_user_privileges(request):
 #     privileges = Privileges.objects.create(
 #         username=request.user,
@@ -283,55 +281,62 @@ def write_fl_to_db(request, game):
 #     privileges.save()
 
 
-@login_required(login_url='login')
-@json_view
-def edit_profile(request):
-    if request.method == "POST":
-        form = UserEditForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return {"success": True}
-        context = csrf(request)
-        form_html = render_crispy_form(form, context=context)
-        return {"success": False, "form_html": form_html}
-    else:
-        # breakpoint()
-        form = UserEditForm(instance=request.user)
-    return render(request, "edit.html", {"form": form, "url_type":"edit", "label":"Edit your profile"})
+# @login_required(login_url='login')
+# @json_view
+# def edit_profile(request):
+#     if request.method == "POST":
+#         form = UserEditForm(request.POST, instance=request.user)
+#         if form.is_valid():
+#             form.save()
+#             return {"success": True}
+#         context = csrf(request)
+#         form_html = render_crispy_form(form, context=context)
+#         return {"success": False, "form_html": form_html}
+#     else:
+#         # breakpoint()
+#         form = UserEditForm(instance=request.user)
+#     return render(request, "edit.html", {"form": form, "url_type":"edit", "label":"Edit your profile"})
 
 
-@login_required(login_url='login')
-@json_view
-def delete_profile(request):
-    pass
-    # if request.method == "POST":
-    #     form = UserEditForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         return {"success": True}
-    #     context = csrf(request)
-    #     form_html = render_crispy_form(form, context=context)
-    #     return {"success": False, "form_html": form_html}
-    # else:
-    #     breakpoint()
-    #     form = UserEditForm(instance=request.user)
-    # return render(request, "usermanage.html", {"form": form})
+# @login_required(login_url='login')
+# @json_view
+# def delete_profile(request):
+#     pass
+#     # if request.method == "POST":
+#     #     form = UserEditForm(request.POST)
+#     #     if form.is_valid():
+#     #         form.save()
+#     #         return {"success": True}
+#     #     context = csrf(request)
+#     #     form_html = render_crispy_form(form, context=context)
+#     #     return {"success": False, "form_html": form_html}
+#     # else:
+#     #     breakpoint()
+#     #     form = UserEditForm(instance=request.user)
+#     # return render(request, "usermanage.html", {"form": form})
 
 
-@login_required(login_url='login')
-@json_view
-def changepassword(request):
-    if request.method == "POST":
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)
-            return {"success": True}
-        context = csrf(request)
-        form_html = render_crispy_form(form, context=context)
-        # breakpoint()
-        return {"success": False, "form_html": form_html}
-    else:
-        # breakpoint()
-        form = PasswordChangeForm(request.user)
-    return render(request, "edit.html", {"form": form, "url_type":"changepassword", "label":"Change your password"})
+# @login_required(login_url='login')
+# @json_view
+# def changepassword(request):
+#     if request.method == "POST":
+#         form = PasswordChangeForm(request.user, request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             update_session_auth_hash(request, user)
+#             return {"success": True}
+#         context = csrf(request)
+#         form_html = render_crispy_form(form, context=context)
+#         # breakpoint()
+#         return {"success": False, "form_html": form_html}
+#     else:
+#         # breakpoint()
+#         form = PasswordChangeForm(request.user)
+#     return render(request, "edit.html", {"form": form, "url_type":"changepassword", "label":"Change your password"})
+
+
+def about(request):
+    return render(request, "about.html")
+
+
+
