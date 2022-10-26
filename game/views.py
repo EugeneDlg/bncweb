@@ -32,6 +32,8 @@ def home(request):
         try:
             # game = Game.objects.get(game_id=request.session.session_key)
             game = Game.objects.get(user=request.user)
+            game.upper_poster = "Please think of a number with " + str(game.capacity) + " digits"
+            game.save()
         except Game.DoesNotExist:
             print("game object created initially")
 
@@ -55,7 +57,6 @@ def home(request):
                 return redirect('dualgame')
             else:
                 return redirect('singlegame')
-
     return render(request, 'home.html', {'game': game})
 
 
@@ -88,8 +89,6 @@ def dual_game(request):
                 return redirect('home')
             finished_flag = bool(int(request.POST.get("finished_flag", False)))
             if finished_flag:
-                # game.game_started = False
-                # game.finish_time = timezone.now()
                 reset_to_initials(game)
                 game.save()
                 return redirect('home')
@@ -316,7 +315,6 @@ def about(request):
 
 def settings(request):
     if request.method == 'POST':
-        breakpoint()
         form = SettingsForm(request.user, post_dict=request.POST)
         form.save()
         return redirect('home')

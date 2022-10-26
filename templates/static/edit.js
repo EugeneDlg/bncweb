@@ -3,10 +3,8 @@ var success_text = initial_text + "<br>" + "<h3>Changes saved <i class=\"materia
 var upper_notice = $('#upper_notice');
 var div_avatar = "#div_id_avatar";
 var avatar = "id_avatar";
-var this_form = "#edit_form";
+var main_form = "#edit_form";
 var max_file_size = 2000000;
-var fileInput = document.getElementById(avatar);
-var filePath = fileInput.value;
 
 function fileValidation() {
     var fileInput = document.getElementById(avatar);
@@ -66,11 +64,10 @@ function setImageVisible(id, visible) {
 }
 
 $(document).ready(function () {
-
+    document.getElementById("delete_button").disabled = !is_avatar_available;
     initial_text_show();
-//    setImageVisible("av_image2", false);
 
-    $(this_form).on("submit", function(){
+    $(main_form).on("submit", function(){
         initial_text_show();
         removeWarnings();
         if (!fileValidation()){
@@ -79,7 +76,7 @@ $(document).ready(function () {
 
         var formData = new FormData(this);
         $.ajax({
-            url: $(this_form).data("url"),
+            url: $(this).data("url"),
             type: 'POST',
             data: formData,
             cache:false,
@@ -90,25 +87,17 @@ $(document).ready(function () {
                 var form_without_button = data['form_html'].replace(/<form .*?>/, "");
                 form_without_button = form_without_button.replace(/<\/form>/, "");
                 var form_with_button = form_without_button + "<button class=\"form_auth_button\" type=\"submit\" name=\"button\" >Submit changes</button>";
-                $(this_form).html(form_with_button);
+                $(this).html(form_with_button);
                 $('#hint_id_password2').text("");
                 $(div_avatar).addClass("file_attention");
                 }
                 else {
                     var fileInput = document.getElementById(avatar);
-                    var filePath = fileInput.value;
-
                     if (fileInput.files && fileInput.files[0]) {
-
                         av_image.src = URL.createObjectURL(fileInput.files[0]);
+                        document.getElementById("delete_button").disabled = false;
                     }
                     upper_notice.html(success_text);
-//                    var url = window.location.href;
-//                    var pattern = /(.*\/{2})(.*?\/)(.*)/i;
-//                    var result = url.match(pattern);
-//                    var new_url = result[1] + result[2] + "login";
-//                    setTimeout(()=>{window.location.replace(new_url);}, 5000);
-
                 }
             },
             error: function (response) {
@@ -117,6 +106,33 @@ $(document).ready(function () {
         });
         return false;
     });
+
+    $("#delete_av_form").on("submit", function(){
+        $.ajax({
+            url: $(this).data("url"),
+            method: 'post',
+            dataType: 'json',
+            data: $(this).serialize(),
+            success: function(data){
+                if (data.success) {
+                    var fileInput = document.getElementById(avatar);
+                    var new_avatar = fileInput.files[0];
+                    // display the default picture after deleting
+                    // am_image is an ID of avatar in the upper half of the page
+                    av_image.src = default_avatar_path;
+                    document.getElementById("delete_button").disabled = true;
+
+                }
+                else {
+                }
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors);
+            }
+        });
+        return false;
+    });
+
 });
 
 //var initial_text = "<h2>" + upper_label + "</h2>";

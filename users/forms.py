@@ -42,6 +42,7 @@ class UserEditForm(UserChangeForm):
 
     def save(self):
         user = super().save()
-        breakpoint()
-        user.extension.avatar = self.cleaned_data.get('avatar')
-        user.extension.save()
+        avatar = self.cleaned_data.get('avatar')
+        if avatar is not None:
+            user.extension.avatar = avatar
+            user.extension.save()

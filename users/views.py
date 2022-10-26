@@ -90,6 +90,10 @@ def changepassword(request):
 @json_view
 def edit_profile(request):
     if request.method == "POST":
+        if request.POST.get("delete_av", False):
+            request.user.delete_avatar()
+            return {"success": True}
+
         form = UserEditForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
@@ -98,9 +102,12 @@ def edit_profile(request):
         form_html = render_crispy_form(form, context=context)
         return {"success": False, "form_html": form_html}
     else:
-        # breakpoint()
+
         form = UserEditForm(instance=request.user)
-    return render(request, "edit.html", {"form": form, "url_type": "edit", "label": "Edit your profile"})
+        # breakpoint()
+    return render(request, "edit.html", {"form": form, "url_type": "edit",
+                                         "label": "Edit your profile",
+                                         "default_avatar": "/media/images/your_default_av.png"})
 
 
 @login_required(login_url='login')

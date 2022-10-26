@@ -24,6 +24,13 @@ def get_extension(self):
     return extension
 
 
+def delete_avatar(self):
+    ext = self.get_extension()
+    ext.avatar = None
+    ext.save()
+
+
 User.add_to_class('create_extension', create_extension)
-User.add_to_class('get_extension', create_extension)
+User.add_to_class('get_extension', get_extension)
+User.add_to_class('delete_avatar', delete_avatar)
 

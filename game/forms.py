@@ -31,7 +31,6 @@ class SettingsForm(forms.Form):
 
     def save(self):
         game = Game.objects.get(user=self.user)
-        breakpoint()
         game.capacity = int(self.post_dict['capacity'])
         game.dual_game = bool(int(self.post_dict['dual_game']))
         game.save()
