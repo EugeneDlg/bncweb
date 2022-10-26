@@ -1,19 +1,16 @@
-import time as tm
 import datetime as dt
 import math
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.template.context_processors import csrf
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
 
 from jsonview.decorators import json_view
 from crispy_forms.utils import render_crispy_form
 
-from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList, User
-from .forms import UserEditForm
-from django.contrib.auth.forms import PasswordChangeForm
+from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList
+from .forms import SettingsForm
 
 from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
@@ -21,40 +18,38 @@ from .bnc_lib import get_data_for_fixture_table, read_config
 
 
 CONFIG_PATH = "bnc_config.yml"
-settings = read_config(CONFIG_PATH)
+initial_settings = read_config(CONFIG_PATH)
 
 
 @login_required(login_url='login')
 def home(request):
     if request.method == "POST":
-        try:
-            game = Game.objects.get(game_id=request.session.session_key)
-        except Exception:
-            raise
+        print("home_post")
+        # game = Game.objects.get(game_id=request.session.session_key)
+        game = Game.objects.get(user=request.user)
     else:
+        print("home_get")
         try:
-            game = Game.objects.get(game_id=request.session.session_key)
+            # game = Game.objects.get(game_id=request.session.session_key)
+            game = Game.objects.get(user=request.user)
         except Game.DoesNotExist:
+            print("game object created initially")
+
             game = Game.objects.create(
                 game_id=request.session.session_key,
-                # capacity=4,
-                game_started=False,
-                upper_poster="Please think of a number with 4 digits",
-                attempts=0
+                upper_poster="Please think of a number with " + str(initial_settings["default_capacity"]) + " digits",
+                capacity=initial_settings["default_capacity"],
+                user=request.user
             )
-            game.save()
             my_history = MyHistory.objects.create(
                 game_id=game
             )
-            my_history.save()
             your_history = YourHistory.objects.create(
                 game_id=game
             )
-            your_history.save()
             total_set = TotalSet.objects.create(
                 game_id=game
             )
-            total_set.save()
         if game.attempts > 0:
             if game.dual_game:
                 return redirect('dualgame')
@@ -67,31 +62,38 @@ def home(request):
 @login_required(login_url='login')
 def dual_game(request):
     if request.method == "POST":
-        flag = int(request.POST.get("flag", False))
-        # flag = request.POST["flag"]
-        try:
-            game = Game.objects.get(game_id=request.session.session_key)
-            my_history = MyHistory.objects.get(game_id=request.session.session_key)
-            your_history = YourHistory.objects.get(game_id=request.session.session_key)
-            total_set = TotalSet.objects.get(game_id=request.session.session_key)
-        except:
-            raise
+        submit_flag = bool(int(request.POST.get("flag", False)))
+        game = Game.objects.get(user=request.user)
+        my_history = MyHistory.objects.get(game_id=game.game_id)
+        your_history = YourHistory.objects.get(game_id=game.game_id)
+        total_set = TotalSet.objects.get(game_id=game.game_id)
         if game.attempts == 0:
-            # if not flag:
+            print("attempts=0")
+            # if not submit_flag:
             #     return JsonResponse({"is_OK": True})
             game.my_guess = get_my_first_guess(game.capacity)
             game.my_number = think_of_number_for_you(game.capacity)
             game.attempts += 1
             game.start_time = timezone.now()
             game.game_started = True
-            print("game started", game.game_started)
             game.new_game_requested = False
             game.upper_poster = "I wish you an interesting game!:-)"
             game.result_code = None
             game.save()
             return render(request, 'dualgame.html', {'game': game})
         else:
-            if not flag:
+            if game.new_game_requested:
+                breakpoint()
+                reset_to_initials(game)
+                return redirect('home')
+            finished_flag = bool(int(request.POST.get("finished_flag", False)))
+            if finished_flag:
+                # game.game_started = False
+                # game.finish_time = timezone.now()
+                reset_to_initials(game)
+                game.save()
+                return redirect('home')
+            if not submit_flag:
                 my_cows_entered = request.POST["my_cows"]
                 my_bulls_entered = request.POST["my_bulls"]
                 if game.dual_game:
@@ -158,19 +160,17 @@ def dual_game(request):
         print("GET dualgame")
         # create_user_privileges(request)
         try:
-            game = Game.objects.get(game_id=request.session.session_key)
-            my_history = MyHistory.objects.get(game_id=request.session.session_key)
-            your_history = YourHistory.objects.get(game_id=request.session.session_key)
+            game = Game.objects.get(user=request.user)
+            my_history = MyHistory.objects.get(game_id=game.game_id)
+            your_history = YourHistory.objects.get(game_id=game.game_id)
         except Game.DoesNotExist:
             game = Game.objects.create(
                 game_id=request.session.session_key,
-                # capacity=4,
                 game_started=False,
+                upper_poster="Please think of a number with " + str(initial_settings["default_capacity"]) + " digits",
+                capacity=initial_settings["default_capacity"],
                 attempts=0
             )
-            game.save()
-        except Exception:
-            raise
         if game.attempts == 0:
             return redirect('home')
     return render(request, 'dualgame.html', {'game': game,
@@ -193,6 +193,7 @@ def finish_dual_game(request, game):
     if result_code > 0:
         write_fl_to_db(request, game)
     game.game_started = False
+    game.new_game_requested = True
     if result_code == 0:
         game.upper_poster = "You have broken my mind! Please be more careful! Think of a new number!"
     elif result_code == 1:
@@ -204,31 +205,21 @@ def finish_dual_game(request, game):
     else:
         game.upper_poster = "We've ended this game in a tie... " \
                                    "Attempts: " + str(game.attempts)
-    game.new_game_requested = True
-    game.game_started = False
-    game.my_guess = None
-    game.your_guess = None
-    game.attempts = 0
     game.save()
-    new_game(request)
 
 
-def new_game(request):
-    try:
-        game = Game.objects.get(game_id=request.session.session_key)
-        my_history = MyHistory.objects.get(game_id=request.session.session_key)
-        your_history = YourHistory.objects.get(game_id=request.session.session_key)
-        total_set = TotalSet.objects.get(game_id=request.session.session_key)
-    except:
-        raise
+def reset_to_initials(game):
+    my_history = MyHistory.objects.get(game_id=game.game_id)
     my_history.items = []
     my_history.save()
+    your_history = YourHistory.objects.get(game_id=game.game_id)
     your_history.items = []
     your_history.save()
+    total_set = TotalSet.objects.get(game_id=game.game_id)
     total_set.set = []
     total_set.save()
     game.game_started = False
-    game.new_game_requested = True
+    game.new_game_requested = False
     game.my_bulls = None
     game.my_cows = None
     game.my_guess = None
@@ -237,15 +228,64 @@ def new_game(request):
     game.your_cows = None
     game.your_guess = None
     game.your_number = None
-    game.capacity = 4
     game.attempts = 0
     game.available_digits_str = "0123456789"
     game.start_time = None
     game.finish_time = None
-    game.upper_poster = "Please think of a number with 4 digits"
-    # game.dual_game keeps the previous state
+    game.upper_poster = "Please think of a number with " + str(game.capacity) + " digits"
+    game.result_code = None
     game.save()
-    return redirect('home')
+
+
+# def new_game(request):
+#     game = Game.objects.get(user=request.user)
+#     if not game.game_started:
+#         return redirect('home')
+#     my_history = MyHistory.objects.get(game_id=request.session.session_key)
+#     your_history = YourHistory.objects.get(game_id=request.session.session_key)
+#     total_set = TotalSet.objects.get(game_id=request.session.session_key)
+#     game.delete()
+#
+#     game = Game.objects.create(
+#         game_id=request.session.session_key,
+#         game_started=False,
+#         upper_poster="Please think of a number with " + initial_settings["default_capacity"] + " digits",
+#         capacity=initial_settings["default_capacity"],
+#         attempts=0
+#     )
+#     my_history = MyHistory.objects.create(
+#         game_id=game
+#     )
+#     your_history = YourHistory.objects.create(
+#         game_id=game
+#     )
+#     total_set = TotalSet.objects.create(
+#         game_id=game
+#     )
+#     # my_history.items = []
+#     # my_history.save()
+#     # your_history.items = []
+#     # your_history.save()
+#     # total_set.set = []
+#     # total_set.save()
+#     # game.game_started = False
+#     # game.my_bulls = None
+#     # game.my_cows = None
+#     # game.my_guess = None
+#     # game.my_number = None
+#     # game.your_bulls = None
+#     # game.your_cows = None
+#     # game.your_guess = None
+#     # game.your_number = None
+#     # game.capacity = 4
+#     # game.attempts = 0
+#     # game.available_digits_str = "0123456789"
+#     # game.start_time = None
+#     # game.finish_time = None
+#     # game.dual_game keeps the previous state
+#     game.new_game_requested = True
+#     game.save()
+#     return redirect('home')
 
 
 def fixture_list(request):
@@ -259,14 +299,32 @@ def fixture_list(request):
 def write_fl_to_db(request, game):
     start_timestamp = dt.datetime.timestamp(game.start_time)
     finish_timestamp = dt.datetime.timestamp(game.finish_time)
-    game = FixtureList.objects.create(
+    f_list = FixtureList.objects.create(
         username=request.user,
         winner=game.result_code,
         attempts=game.attempts,
         time=game.start_time,
         duration=math.ceil((finish_timestamp - start_timestamp) / 60)
     )
-    game.save()
+
+    f_list.save()
+
+
+def about(request):
+    return render(request, "about.html")
+
+
+def settings(request):
+    if request.method == 'POST':
+        breakpoint()
+        form = SettingsForm(request.user, post_dict=request.POST)
+        form.save()
+        return redirect('home')
+    else:
+        form = SettingsForm(request.user)
+    return render(request, "settings.html", {'form': form})
+
+
 
 # проверить это. почему привилегии создаются в ткинтер-версии, а не здесь
 # def create_user_privileges(request):
@@ -335,8 +393,6 @@ def write_fl_to_db(request, game):
 #     return render(request, "edit.html", {"form": form, "url_type":"changepassword", "label":"Change your password"})
 
 
-def about(request):
-    return render(request, "about.html")
 
 
 

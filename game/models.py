@@ -7,6 +7,7 @@ from django.contrib import auth
 # Create your models here.
 class Game(models.Model):
     game_id = models.CharField(max_length=251, unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     my_bulls = models.IntegerField(null=True)
     my_cows = models.IntegerField(null=True)
     my_guess = models.CharField(max_length=10, null=True)
@@ -19,7 +20,7 @@ class Game(models.Model):
     attempts = models.IntegerField(default=0)
     available_digits_str = models.CharField(max_length=10, default="0123456789")
     dual_game = models.BooleanField(default=True)
-    game_started = models.BooleanField(default=True)
+    game_started = models.BooleanField(default=False)
     new_game_requested = models.BooleanField(default=False)
     start_time = models.DateTimeField(null=True)
     finish_time = models.DateTimeField(null=True)

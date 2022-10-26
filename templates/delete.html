@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+	<div class="container p-3">
+  	 	<h2 class="font-weight-bold mt-2">Confirm to delete</h2>
+		<hr>
+		<p>Are you sure you want to stop the game and delete your profile?</p>
+		<form id="delete_form" method="post">
+      		<div>
+        		<button class="btn btn-primary" type="submit">Delete</button>
+				<input type="button" class="btn btn-primary"  value="Cancel" onclick="history.back()">
+      		</div>
+  		</form>
+	</div>
+
+{% endblock %}

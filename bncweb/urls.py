@@ -26,9 +26,8 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', include('game.urls')),
+    path('home/', include('game.urls')), # может удалить
     path('login/', views.login_view, name="login"),
-    path('signout/', views.signout_view, name="signout"),
     path('', include('game.urls')),
     path('', include('users.urls')),
 ]

@@ -18,7 +18,7 @@ $(document).ready(function () {
         var dict_json = dict0 + '&flag=0';
         csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
         $.ajax({
-            url: $("#game_form").data("url"),
+            url: $(this).data("url"),
             method: 'post',
             dataType: 'json',
             data: dict_json,
@@ -46,6 +46,28 @@ $(document).ready(function () {
             }
         });
         return false;
+    });
+    $("#finish_form").on("submit", function(e){
+
+        var msg = "Are you sure you want to finish the game?";
+        if (!confirm(msg)){
+            e.preventDefault();
+            return false;
+        }
+        wait_item.style.display = '';
+        var dict1 = $(this).serialize();
+//        var dict_json1 = dict1 + '&flag=1';
+
+        alert(dd);
+        $.ajax({
+            url: $("#finish_form").data("url"),
+            method: 'post',
+            dataType: 'json',
+            data: dict1,
+            success: function(data){},
+            error: function(response){console.log(response);}
+
+        });
     });
     if (game_started){
         var count = 0;

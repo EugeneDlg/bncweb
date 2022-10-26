@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"/>{% endblock %}
+{% block title %}
+	Settings
+{% endblock %}
+{% block content %}
+
+	<div class="container p-3">
+
+  	 	<h2 class="font-weight-bold mt-4">Settings</h2>
+		<hr>
+		<p>Here you can customize the game:</p>
+        <div class="row d-flex justify-content-left align-items-center h-100">
+            <div class="col-3">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </form>
+            </div>
+        </div>
+  	</div>
+
+{% endblock %}

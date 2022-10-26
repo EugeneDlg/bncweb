@@ -8,7 +8,6 @@
     width: 500px;
     height: 500px;
     margin: 0 auto;
-    /*background: url(http://www.dailycompass.org/wp-content/uploads/2013/01/Bubbles.jpg);*/
     background: url('/static/bg-image0.jpg');
     background-size: cover;
     border-radius: 4px;
@@ -17,7 +16,6 @@
     width: 800px;
     height: 800px;
     margin: 0 auto;
-    /*background: url(http://www.dailycompass.org/wp-content/uploads/2013/01/Bubbles.jpg);*/
     background-size: cover;
     border-radius: 4px;
 }
@@ -73,11 +71,18 @@ input:focus {
     width:100%;
     text-align:center;
 }
-span{
+.asteriskField{
     font-weight: normal;
     color: red;
     font-size: 10px;
 }
+/*#div_id_username::before{
+    content: "You have already logged in on another device";
+    color: red;
+    display: block;
+    background: #ffffff;
+    opacity: 0.7;
+}*/
 .invalid-feedback::before {
     content: "\a";
     white-space: pre;
@@ -90,11 +95,17 @@ span{
 
 .invalid_file_size::after{
     color: red;
-    content: "File size cannot be greater than 1Mb";
+    content: "File size cannot be greater than 2Mb";
 }
 
 .file_attention{
     border-color: blue;
     border-style: dotted;
     border-width: thin;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 15vw;
+
 }

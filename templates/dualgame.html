@@ -12,15 +12,15 @@
       <div class="col-lg-12 text-center">
 
         {% if game.result_code == 0 %}
-          <div class="card mb-5 game_broken">{{ game.upper_poster }}</div>
+          <div class="card mb-5 shadow p-2 bg-body rounded game_broken">{{ game.upper_poster }}</div>
         {% elif game.result_code == 1 %}
-          <div class="card mb-5 my_win">{{ game.upper_poster }}</div>
+          <div class="card mb-5 shadow p-2 bg-body rounded my_win">{{ game.upper_poster }}</div>
         {% elif game.result_code == 2 %}
-          <div class="card mb-5 your_win">{{ game.upper_poster }}</div>
+          <div class="card mb-5 shadow p-2 bg-body roundedyour_win">{{ game.upper_poster }}</div>
         {% elif game.result_code == 3 %}
-          <div class="card mb-5 tie">{{ game.upper_poster }}</div>
+          <div class="card mb-5 shadow p-2 bg-body rounded tie">{{ game.upper_poster }}</div>
         {% else %}
-          <div class="card mb-5">{{ game.upper_poster }}</div>
+          <div class="card mb-5 shadow p-2 bg-body rounded">{{ game.upper_poster }}</div>
         {% endif %}
       </div>
     </div>
@@ -29,11 +29,13 @@
       <div class="row">
         <div class="col-lg-6 text-center">
           <div class="card mb-2">
-            <h5 class="card-header stylered">My part</h5>
-            <div class="card m-1 " >
-              <img class="card-img-top img-fluid" src="/media/images/my_default_av.jpg" alt="My avatar" >
+            <h5 class="card-header">My part</h5>
+            <div class="card m-1 mx-auto" >
+<!--              <div  style="width: 200px; height: 200px;">-->
+              <img class="card-img-top img-fluid" width="50%" height="50%" src="/media/images/my_default_av.jpg" alt="My avatar" >
+<!--                </div>-->
             </div>
-            <div class="card mb-3" ><span id="my_guess">I guess your number is:
+            <div class="card mb-3 p-2" ><span id="my_guess">I guess your number is:
               {% if game.my_guess is not None %} {{ game.my_guess }}{% endif %}</span></div>
             <div>Enter the number of cows:  <input type="text" name="my_cows" autofocus maxlength="10" required id="my_cows"
                                             {% if not game.game_started %} disabled {% endif %}></div>
@@ -55,18 +57,20 @@
         <div class="col-lg-6 text-center">
           <div class="card mb-2">
             <h5 class="card-header">Your part</h5>
-            <div class="card m-1" >
+            <div class="card m-1 mx-auto" >
+<!--              <div  style="width: 200px; height: 200px;">-->
             {% if request.user.extension.avatar.url is not None %}
-              <img class="card-img-top img-fluid" src="{{ request.user.extension.avatar.url }}" alt="Your avatar" >
+              <img class="card-img-top img-fluid" width="50%" height="50%" src="{{ request.user.extension.avatar.url }}" alt="Your avatar" >
             {% else %}
               <img class="card-img-top img-fluid" src="/media/images/your_default_av.png" alt="Your avatar" >
             {% endif %}
+<!--                </div>-->
             </div>
-            <div class="card mb-3"><span>Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="5" required id="your_guess"
+            <div class="card mb-2 p-1"><span>Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="5" required id="your_guess"
                                                                                 {% if not game.game_started %} disabled {% endif %}></span></div>
-            <div>You have found qty of cows: {% if game.your_cows is not None %} {{ game.your_cows}} {% endif %}</div>
+              <div class="card m-2">You have found qty of cow: {% if game.your_cows is not None %} {{ game.your_cows}} {% endif %}</div>
             <br>
-            <div>You have found qty of bulls: {% if game.your_bulls is not None %} {{ game.your_bulls }} {% endif %}<br><br></div>
+              <div class="card m-2">You have found qty of bulls: {% if game.your_bulls is not None %} {{ game.your_bulls }} {% endif %}</div>
             {% if game.attempts > 1 %}
             <div class="card">
               <h6 class="card-header">Your history</h6>
@@ -84,14 +88,29 @@
       <br>
       <div class="row justify-content-center">
         <div class="col-lg-12 text-center">
-          <button type="submit" style="width: 18rem;">
+          <button type="submit" class="btn btn-primary" style="width: 18rem;">
             {% if game.game_started %} Ok!
             {% else %} Play again!
             {% endif %}
           </button>
+
         </div>
       </div>
     </form>
+    {% if game.game_started %}
+      <br>
+      <form id="finish_form" data-url="{% url 'dualgame' %}" method="post" {% if not game.game_started %} class="form-inactive" {% endif %}>
+        {% csrf_token %}
+        <input type="hidden" name="finished_flag" value="1">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 text-center">
+                <button type="submit" class="btn btn-primary" style="width: 18rem;">
+                    Finish the game
+                </button>
+            </div>
+        </div>
+      </form>
+     {% endif %}
     <br>
     <div id="wait" ><i>Wait...</i></div>
   </div>

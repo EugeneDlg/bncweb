@@ -1,4 +1,5 @@
 ---
+  default_capacity: 4
   pincode:
     subject: Recovering your password
     text: |

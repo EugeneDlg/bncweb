@@ -4,3 +4,6 @@ tttt
 log
 !log/tttt
 **/__pycache__/
+bncweb/test001.py
+game/test001.py
+templates/testajax.html

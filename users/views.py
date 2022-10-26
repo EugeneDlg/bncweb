@@ -3,6 +3,9 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
+from django.contrib.auth import logout
+from django.shortcuts import render, redirect
 
 from crispy_forms.utils import render_crispy_form
 from jsonview.decorators import json_view
@@ -19,43 +22,41 @@ settings = read_config(CONFIG_PATH)
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST, request.FILES)
-        # form_ext = SignUpFormExt(request.POST, request.FILES)
-        breakpoint()
         if form.is_valid():
-            # user.first_name = form.cleaned_data['first_name']
-            # user.last_name = form.cleaned_data["last_name"]
-            # user.username = form.cleaned_data["username"]
-            # user.password = form.cleaned_data["password1"]
-            # user.email = form.cleaned_data["email"]
             form.save()
             username = form.cleaned_data["username"]
             firstname = form.cleaned_data["first_name"]
             lastname = form.cleaned_data["last_name"]
             password = form.cleaned_data["password1"]
             email = form.cleaned_data["email"]
-            # form_ext.save()
-            # avatar = form_ext.cleaned_data["avatar"]
             # signup_user = User.objects.get(username=username)
             # user_group = Group.objects.get(name='User')
             # user_group.user_set.add(signup_user)
             validate_db_user(settings, username, "create")  # for compatibility with GUI Tkinter version
-            # create_db_user(settings, username, password)  # for compatibility with GUI Tkinter version
+            create_db_user(settings, username, password)  # for compatibility with GUI Tkinter version
             replace_list = (("FIRSTNAME", firstname), ("LASTNAME", lastname))
-            # try:
-            # send_email(settings, email, "welcome", replace_list)
-            # except Exception as exc:
-            #     raise exc
+            try:
+                send_email(settings, email, "welcome", replace_list)
+            except Exception as exc:
+                raise exc
             return {'success': True}
-        breakpoint()
         ctx = {}
         ctx.update(csrf(request))
         form_html = render_crispy_form(form, context=ctx)
         return {'success': False, 'form_html': form_html}
     else:
+        if request.user.is_authenticated:
+            return redirect('edit')
         form = SignUpForm()
-        # form_ext = SignUpFormExt()
-        # breakpoint()
     return render(request, 'signup.html', {'form': form})
+
+
+@login_required(login_url='login')
+def signout_view(request):
+    game = request.user.game
+    game.delete()
+    logout(request)
+    return redirect('login')
 
 
 class MyPasswordResetConfirmView(PasswordResetConfirmView):
@@ -78,7 +79,6 @@ def changepassword(request):
             return {"success": True}
         context = csrf(request)
         form_html = render_crispy_form(form, context=context)
-        # breakpoint()
         return {"success": False, "form_html": form_html}
     else:
         # breakpoint()
@@ -90,7 +90,7 @@ def changepassword(request):
 @json_view
 def edit_profile(request):
     if request.method == "POST":
-        form = UserEditForm(request.POST, instance=request.user)
+        form = UserEditForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             return {"success": True}
@@ -100,22 +100,15 @@ def edit_profile(request):
     else:
         # breakpoint()
         form = UserEditForm(instance=request.user)
-    return render(request, "edit.html", {"form": form, "url_type":"edit", "label":"Edit your profile"})
+    return render(request, "edit.html", {"form": form, "url_type": "edit", "label": "Edit your profile"})
 
 
 @login_required(login_url='login')
-@json_view
 def delete_profile(request):
-    pass
-    # if request.method == "POST":
-    #     form = UserEditForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         return {"success": True}
-    #     context = csrf(request)
-    #     form_html = render_crispy_form(form, context=context)
-    #     return {"success": False, "form_html": form_html}
-    # else:
-    #     breakpoint()
-    #     form = UserEditForm(instance=request.user)
-    # return render(request, "usermanage.html", {"form": form})
+    if request.method == "POST":
+        user = User.objects.get(username=request.user)
+        user.delete()
+        logout(request)
+        return redirect('login')
+    else:
+        return render(request, "delete.html")
