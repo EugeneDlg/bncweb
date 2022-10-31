@@ -71,6 +71,12 @@ input:focus {
     width:100%;
     text-align:center;
 }
+.right {
+    position: fixed;
+    bottom: 20px;
+    width:100%;
+    text-align:right;
+}
 .asteriskField{
     font-weight: normal;
     color: red;

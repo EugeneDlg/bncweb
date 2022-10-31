@@ -4,8 +4,71 @@
 	width:100%;
 	text-align:center;
 }
-.err_input {border-color:red;}
-.err_label {font-size: 80%; color: red;}
+
+.right {
+    position: fixed;
+    bottom: 20px;
+    width:100%;
+    text-align:right;
+}
+
+.err_input {
+    border-color:red;
+}
+
+.err_label {
+    font-size: 80%;
+    color: red;
+}
+
 .form-inactive {
 	color: grey;
 }
+
+.alert-danger {
+	color: red;
+	display: block;
+    background: #ffffff;
+    opacity: 0.7;
+}
+input:focus {
+  color: #000000;
+  border-radius: 10px;
+  border: 2px solid #436fea;
+}
+
+.center {
+    position: fixed;
+    bottom: 20px;
+    width:100%;
+    text-align:center;
+}
+.right {
+    position: fixed;
+    bottom: 20px;
+    width:100%;
+    text-align:right;
+}
+.fixed-bottom {
+    position: fixed;
+    bottom: 20px;
+    width:100%;
+}
+.asteriskField{
+    font-weight: normal;
+    color: red;
+    font-size: 10px;
+}
+/*#div_id_username::before{
+    content: "You have already logged in on another device";
+    color: red;
+    display: block;
+    background: #ffffff;
+    opacity: 0.7;
+}*/
+.invalid-feedback::before {
+    content: "\a";
+    white-space: pre;
+}
+
+

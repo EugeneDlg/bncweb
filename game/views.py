@@ -30,13 +30,16 @@ def home(request):
     else:
         print("home_get")
         try:
-            # game = Game.objects.get(game_id=request.session.session_key)
             game = Game.objects.get(user=request.user)
+            if game.attempts > 0:
+                if game.dual_game:
+                    return redirect('dualgame')
+                else:
+                    return redirect('singlegame')
             game.upper_poster = "Please think of a number with " + str(game.capacity) + " digits"
             game.save()
         except Game.DoesNotExist:
             print("game object created initially")
-
             game = Game.objects.create(
                 game_id=request.session.session_key,
                 upper_poster="Please think of a number with " + str(initial_settings["default_capacity"]) + " digits",
@@ -52,11 +55,6 @@ def home(request):
             total_set = TotalSet.objects.create(
                 game_id=game
             )
-        if game.attempts > 0:
-            if game.dual_game:
-                return redirect('dualgame')
-            else:
-                return redirect('singlegame')
     return render(request, 'home.html', {'game': game})
 
 
@@ -70,8 +68,6 @@ def dual_game(request):
         total_set = TotalSet.objects.get(game_id=game.game_id)
         if game.attempts == 0:
             print("attempts=0")
-            # if not submit_flag:
-            #     return JsonResponse({"is_OK": True})
             game.my_guess = get_my_first_guess(game.capacity)
             game.my_number = think_of_number_for_you(game.capacity)
             game.attempts += 1
@@ -80,11 +76,11 @@ def dual_game(request):
             game.new_game_requested = False
             game.upper_poster = "I wish you an interesting game!:-)"
             game.result_code = None
+            game.elapsed = 0
             game.save()
             return render(request, 'dualgame.html', {'game': game})
         else:
             if game.new_game_requested:
-                breakpoint()
                 reset_to_initials(game)
                 return redirect('home')
             finished_flag = bool(int(request.POST.get("finished_flag", False)))
@@ -150,6 +146,7 @@ def dual_game(request):
                 game.result_code = 2
             if your_result and my_result:
                 game.result_code = 3
+            game.elapsed = int(timezone.now().timestamp() - game.start_time.timestamp())
             game.save()
             if game.result_code is not None:
                 finish_dual_game(request, game)
@@ -172,6 +169,9 @@ def dual_game(request):
             )
         if game.attempts == 0:
             return redirect('home')
+    if game.game_started:
+        game.elapsed = int(timezone.now().timestamp() - game.start_time.timestamp())
+        game.save()
     return render(request, 'dualgame.html', {'game': game,
                                              'my_items': my_history.items, 'your_items': your_history.items})
 
@@ -181,16 +181,10 @@ def single_game(request):
     return render(request, 'singlegame.html')
 
 
-@login_required(login_url='login')
-def users_view(request):
-    return render(request, 'users.html')
-
-
 def finish_dual_game(request, game):
     result_code = game.result_code
     game.finish_time = timezone.now()
-    if result_code > 0:
-        write_fl_to_db(request, game)
+    game.elapsed = int(game.finish_time.timestamp() - game.start_time.timestamp())
     game.game_started = False
     game.new_game_requested = True
     if result_code == 0:
@@ -205,6 +199,8 @@ def finish_dual_game(request, game):
         game.upper_poster = "We've ended this game in a tie... " \
                                    "Attempts: " + str(game.attempts)
     game.save()
+    if result_code > 0:
+        write_fl_to_db(request, game)
 
 
 def reset_to_initials(game):
@@ -288,7 +284,6 @@ def reset_to_initials(game):
 
 
 def fixture_list(request):
-    # print("User: ", User.objects.get(username='greta0').first_name)
     fl_raw_data = FixtureList.objects.all()
     fl_data = get_data_for_fixture_table(fl_raw_data, User.objects.get) ###
     return render(request, 'fixturelist.html', {'fl_data': fl_data})

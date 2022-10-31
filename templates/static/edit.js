@@ -86,8 +86,9 @@ $(document).ready(function () {
                 if (!(data.success)) {
                 var form_without_button = data['form_html'].replace(/<form .*?>/, "");
                 form_without_button = form_without_button.replace(/<\/form>/, "");
-                var form_with_button = form_without_button + "<button class=\"form_auth_button\" type=\"submit\" name=\"button\" >Submit changes</button>";
-                $(this).html(form_with_button);
+                var form_with_button = form_without_button +
+                    "<div class=\"justify-content-center  text-center\"><button class=\"btn btn-primary\" type=\"submit\" name=\"button\" >Submit changes</button></div>";
+                $(main_form).html(form_with_button);
                 $('#hint_id_password2').text("");
                 $(div_avatar).addClass("file_attention");
                 }

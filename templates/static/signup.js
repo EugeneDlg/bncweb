@@ -12,6 +12,10 @@ function fileValidation() {
     var allowedExtensions =
             /(\.jpg|\.jpeg|\.png|\.gif)$/i;
 
+    if (!(fileInput.files && fileInput.files[0])) {
+        return true;
+    }
+
     if (!allowedExtensions.exec(filePath)) {
         $(div_avatar).addClass('invalid_file_format');
         fileInput.value = '';
@@ -71,6 +75,7 @@ $(document).ready(function () {
                 form_without_button = form_without_button.replace(/<\/form>/, "");
                 var form_with_button = form_without_button + "<button class=\"form_auth_button\" type=\"submit\" name=\"button\" >Create user</button>";
                 $(this_form).html(form_with_button);
+                alert(form_with_button);
                 $('#hint_id_password2').text("");
                 $(div_avatar).addClass("file_attention");
                 }

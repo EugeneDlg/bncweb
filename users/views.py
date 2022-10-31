@@ -15,7 +15,7 @@ from .bnc_lib import read_config, validate_db_user, create_db_user, modify_db_us
 from .forms import SignUpForm, UserEditForm
 
 CONFIG_PATH = "bnc_config.yml"
-settings = read_config(CONFIG_PATH)
+initial_settings = read_config(CONFIG_PATH)
 
 
 @json_view
@@ -32,11 +32,11 @@ def signup_view(request):
             # signup_user = User.objects.get(username=username)
             # user_group = Group.objects.get(name='User')
             # user_group.user_set.add(signup_user)
-            validate_db_user(settings, username, "create")  # for compatibility with GUI Tkinter version
-            create_db_user(settings, username, password)  # for compatibility with GUI Tkinter version
+            validate_db_user(initial_settings, username, "create")  # for compatibility with GUI Tkinter version
+            create_db_user(initial_settings, username, password)  # for compatibility with GUI Tkinter version
             replace_list = (("FIRSTNAME", firstname), ("LASTNAME", lastname))
             try:
-                send_email(settings, email, "welcome", replace_list)
+                send_email(initial_settings, email, "welcome", replace_list)
             except Exception as exc:
                 raise exc
             return {'success': True}
@@ -64,7 +64,7 @@ class MyPasswordResetConfirmView(PasswordResetConfirmView):
         user = form.save()
         password = form.cleaned_data["new_password1"]
         # for compatibility with GUI Tkinter version
-        modify_db_user(settings, str(user), password)
+        modify_db_user(initial_settings, str(user), password)
         return super().form_valid(form)
 
 
@@ -93,7 +93,6 @@ def edit_profile(request):
         if request.POST.get("delete_av", False):
             request.user.delete_avatar()
             return {"success": True}
-
         form = UserEditForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
@@ -104,10 +103,10 @@ def edit_profile(request):
     else:
 
         form = UserEditForm(instance=request.user)
-        # breakpoint()
     return render(request, "edit.html", {"form": form, "url_type": "edit",
                                          "label": "Edit your profile",
-                                         "default_avatar": "/media/images/your_default_av.png"})
+                                         "default_avatar": "/media/images/your_default_av.png",
+                                         "is_admin": request.user==initial_settings["admin_user"]})
 
 
 @login_required(login_url='login')

@@ -25,7 +25,8 @@ class Game(models.Model):
     start_time = models.DateTimeField(null=True)
     finish_time = models.DateTimeField(null=True)
     upper_poster = models.CharField(max_length=250, null=True)
-    result_code = models.CharField(max_length=250, null=True)
+    result_code = models.IntegerField(null=True)
+    elapsed = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['game_id']
