@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'dualgame.css' %}"/>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'game.css' %}"/>{% endblock %}
 {% block title %}
 	Dual BnC Game
 {% endblock %} 
@@ -31,7 +31,7 @@
       <div class="row">
         <div class="col-lg-6 text-center">
           <div class="card mb-2">
-            <h5 class="card-header">My part</h5>
+            <h5 class="card-header">My side</h5>
             <div class="card m-1 mx-auto" >
 <!--              <div  style="width: 200px; height: 200px;">-->
               <img class="card-img-top img-fluid" width="50%" height="50%" src="/media/images/my_default_av.jpg" alt="My avatar" >
@@ -58,7 +58,7 @@
         </div>
         <div class="col-lg-6 text-center">
           <div class="card mb-2">
-            <h5 class="card-header">Your part</h5>
+            <h5 class="card-header">Your side</h5>
             <div class="card m-1 mx-auto" >
 <!--              <div  style="width: 200px; height: 200px;">-->
             {% if request.user.extension.avatar.url is not None %}
@@ -129,11 +129,12 @@
 {% block scripts %}
 <script type="text/javascript">
     {% if game.game_started %} var game_started = true; {% else %} var game_started = false; {% endif %}
+    {% if game.dual_game %} var dual_game = true; {% else %} var dual_game = false; {% endif %}
     var elapsed = {{ game.elapsed }};
     {% if game.result_code is None %} var result_code = null; {% else %} var result_code = {{ game.result_code }};{% endif %}
 </script>
 {{ block.super }}
-<script type="text/javascript" src="{% static 'dualgame.js' %}"></script>
+<script type="text/javascript" src="{% static 'game.js' %}"></script>
 <script type="text/javascript" src="{% static 'jquery.fireworks.js' %}"></script>
 
 {% endblock %}

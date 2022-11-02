@@ -1,11 +1,10 @@
-var initial_text = "<h2>" + upper_label + "</h2>";
-var success_text = initial_text + "<br>" + "<h3>Changes saved <i class=\"material-icons\">done</i></h3>";
+var initial_text = upper_label;
+var success_text = initial_text + "<br>" + '<h4 style="color: green;">Changes saved <i class="material-icons">done</i></h4>';
 var upper_notice = '#upper_notice';
 var main_form = "#edit_form";
 
 function initial_text_show(){
      $(upper_notice).html(initial_text);
-     $(upper_notice).addClass('initial-upper-notice');
 }
 
 $(document).ready(function () {
@@ -22,12 +21,13 @@ $(document).ready(function () {
             contentType: false,
             processData: false,
             success: function(data) {
+                var form_without_button = data['form_html'].replace(/<form .*?>/, "");
+                form_without_button = form_without_button.replace(/<\/form>/, "");
+                var form_with_button = form_without_button +
+                "<div class=\"justify-content-center  text-center\"><button class=\"btn btn-primary\"" +
+                " type=\"submit\" name=\"button\" >Submit changes</button></div>";
+                $(main_form).html(form_with_button);
                 if (!(data.success)) {
-                    var form_without_button = data['form_html'].replace(/<form .*?>/, "");
-                    form_without_button = form_without_button.replace(/<\/form>/, "");
-                    var form_with_button = form_without_button +
-                    "<div class=\"justify-content-center  text-center\"><button class=\"btn btn-primary\" type=\"submit\" name=\"button\" >Submit changes</button></div>";
-                    $(main_form).html(form_with_button);
                     $('#hint_id_password2').text("");
                 }
                 else {
@@ -35,7 +35,7 @@ $(document).ready(function () {
                 }
             },
             error: function (response) {
-                console.log(response.responseJSON.errors);
+                console.log(response.responseText);
             }
         });
         return false;

@@ -80,10 +80,8 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'bnc',
-        # 'USER': "bnc_default",
-        # "PASSWORD": "bncdflt1!",
-        'USER': "postgres",
-        "PASSWORD": "tP$sa7Ml",
+        'USER': os.environ["bnc_db_user"],
+        "PASSWORD": os.environ["bnc_db_password"],
         "HOST": "rtrdb.cnreopapz1wl.us-east-1.rds.amazonaws.com",
         "PORT": "5432",
     }

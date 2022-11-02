@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
+{% block css %}
+               <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}"/>
+{% endblock %}
 {% block content %}
 
 	<div class="container p-3">
-  	 	<h2 class="font-weight-bold mt-4">About this game</h2>
+		{% csrf_token %}
+  	 	<h2 class="font-weight-bold mt-4">About this <span onclick="show_my_number();">game</span></h2>
 		<hr>
 		<p>It's a modified version of classical game Bulls and Cows. One of participants thinks of
 			a number which consists of non-repeatable digits, and the second participant tries
@@ -12,9 +16,19 @@
 			and the proposed one and reports to the second gamer two values:
 			the overall amount of the coincident digits (cows) and the amount of the coincident digits
 			which have the right position (bulls).</p>
+<!--		<button id="invis" type="submit">Press me</button>-->
 		<p>Please read more at the following link:
 			<a href="https://en.wikipedia.org/wiki/Bulls_and_Cows">Bulls and cows</a>
 		</p>
   	</div>
-
+<div class="center">
+	<div class="container">
+		<p class="text-center">Copyright &copy; 2022 Bulls and Cows game by Eugene Dolgov</p>
+	</div>
+</div>
 {% endblock %}
+{% block scripts %}
+	{{ block.super }}
+	<script type="text/javascript" src="{% static 'about.js' %}"></script>
+{% endblock %}
+

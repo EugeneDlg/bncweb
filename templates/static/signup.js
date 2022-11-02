@@ -1,4 +1,4 @@
-var success_text = "The user is successfully created! " + '<i class="material-icons">done</i>' + "<br>Forwarding to login page...";
+var success_text = '<h4> style="color: green;">The user is successfully created!<i class="material-icons">done</i><br>Forwarding to login page...</h4>';
 var initial_text = "Please input the following information to create a new account";
 var div_avatar = "#div_id_avatar";
 var avatar = "id_avatar";
@@ -28,14 +28,14 @@ function fileValidation() {
     }
 
         if (fileInput.files && fileInput.files[0]) {
-            var reader = new FileReader();
+//            var reader = new FileReader();
 //            reader.onload = function(e) {
 //                document.getElementById(
 //                    'imagePreview').innerHTML =
 //                    '<img src="' + e.target.result
 //                    + '"/>';
 //            };
-            reader.readAsDataURL(fileInput.files[0]);
+//            reader.readAsDataURL(fileInput.files[0]);
             return true;
         }
 }
@@ -54,8 +54,6 @@ function removeWarnings(){
 $(document).ready(function () {
     var upper_notice = $('#upper_notice');
     upper_notice.html(initial_text);
-    upper_notice.attr("style", "color: green; font-weight: bold;");
-
     $(this_form).on("submit", function(){
         removeWarnings();
         if (!fileValidation()){
@@ -70,14 +68,14 @@ $(document).ready(function () {
             contentType: false,
             processData: false,
             success: function(data) {
-                if (!(data.success)) {
+            success: function(data) {
                 var form_without_button = data['form_html'].replace(/<form .*?>/, "");
                 form_without_button = form_without_button.replace(/<\/form>/, "");
                 var form_with_button = form_without_button + "<button class=\"form_auth_button\" type=\"submit\" name=\"button\" >Create user</button>";
                 $(this_form).html(form_with_button);
-                alert(form_with_button);
-                $('#hint_id_password2').text("");
-                $(div_avatar).addClass("file_attention");
+                if (!(data.success)) {
+                    $('#hint_id_password2').text("");
+                    $(div_avatar).addClass("file_attention");
                 }
                 else {
                     upper_notice.html(success_text);
@@ -85,12 +83,11 @@ $(document).ready(function () {
                     var pattern = /(.*\/{2})(.*?\/)(.*)/i;
                     var result = url.match(pattern);
                     var new_url = result[1] + result[2] + "login";
-                    setTimeout(()=>{window.location.replace(new_url);}, 5000);
-
+                    setTimeout(()=>{window.location.replace(new_url);}, 7000);
                 }
             },
             error: function (response) {
-                console.log(response.responseJSON.errors);
+                console.log(response.responseText);
             }
         });
         return false;

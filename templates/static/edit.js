@@ -1,5 +1,5 @@
-var initial_text = "<h2>" + upper_label + "</h2>";
-var success_text = initial_text + "<br>" + "<h3>Changes saved <i class=\"material-icons\">done</i></h3>";
+var initial_text = upper_label;
+var success_text = initial_text + "<br>" + '<h4 style="color: green;">Changes saved <i class="material-icons">done</i></h4>';
 var upper_notice = $('#upper_notice');
 var div_avatar = "#div_id_avatar";
 var avatar = "id_avatar";
@@ -29,14 +29,8 @@ function fileValidation() {
     }
 
     if (fileInput.files && fileInput.files[0]) {
-        var reader = new FileReader();
-//            reader.onload = function(e) {
-//                document.getElementById(
-//                    'imagePreview').innerHTML =
-//                    '<img src="' + e.target.result
-//                    + '"/>';
-//            };
-        reader.readAsDataURL(fileInput.files[0]);
+//        var reader = new FileReader();
+//        reader.readAsDataURL(fileInput.files[0]);
         return true;
     }
 }
@@ -53,9 +47,7 @@ function removeWarnings(){
     }
 }
 function initial_text_show(){
-
      upper_notice.html(initial_text);
-     upper_notice.attr("style", "color: green; font-weight: bold;");
 }
 
 function setImageVisible(id, visible) {
@@ -66,14 +58,13 @@ function setImageVisible(id, visible) {
 $(document).ready(function () {
     document.getElementById("delete_button").disabled = !is_avatar_available;
     initial_text_show();
-
     $(main_form).on("submit", function(){
+        var fileInput_ = document.getElementById(avatar);
         initial_text_show();
         removeWarnings();
         if (!fileValidation()){
             return false;
         }
-
         var formData = new FormData(this);
         $.ajax({
             url: $(this).data("url"),
@@ -83,14 +74,18 @@ $(document).ready(function () {
             contentType: false,
             processData: false,
             success: function(data) {
-                if (!(data.success)) {
                 var form_without_button = data['form_html'].replace(/<form .*?>/, "");
                 form_without_button = form_without_button.replace(/<\/form>/, "");
                 var form_with_button = form_without_button +
-                    "<div class=\"justify-content-center  text-center\"><button class=\"btn btn-primary\" type=\"submit\" name=\"button\" >Submit changes</button></div>";
+                "<div class=\"justify-content-center  text-center\"><button class=\"btn btn-primary\"" +
+                " type=\"submit\" name=\"button\" >Submit changes</button></div>";
                 $(main_form).html(form_with_button);
-                $('#hint_id_password2').text("");
-                $(div_avatar).addClass("file_attention");
+//                if (fileInput_.files && fileInput_.files[0]) {
+//                $(main_form).append('avatar', fileInput_.files[0],fileInput_.files[0]);
+//                }
+                if (!(data.success)) {
+                    $('#hint_id_password2').text("");
+                    $(div_avatar).addClass("file_attention");
                 }
                 else {
                     var fileInput = document.getElementById(avatar);
@@ -102,7 +97,7 @@ $(document).ready(function () {
                 }
             },
             error: function (response) {
-                console.log(response.responseJSON.errors);
+                console.log(response.responseText);
             }
         });
         return false;
@@ -122,13 +117,12 @@ $(document).ready(function () {
                     // am_image is an ID of avatar in the upper half of the page
                     av_image.src = default_avatar_path;
                     document.getElementById("delete_button").disabled = true;
-
                 }
                 else {
                 }
             },
             error: function (response) {
-                console.log(response.responseJSON.errors);
+                console.log(response.responseText);
             }
         });
         return false;
@@ -136,17 +130,7 @@ $(document).ready(function () {
 
 });
 
-//var initial_text = "<h2>" + upper_label + "</h2>";
-//var success_text = initial_text + "<br>" + "<h3>Changes saved <i class=\"material-icons\">done</i></h3>";
-//
-//
-//$(document).ready(function () {
-//    var upper_notice = $('#upper_notice');
-////    upper_notice.text(initial_text);
-//    upper_notice.html(initial_text);
-//    upper_notice.attr("style", "color: green; font-weight: bold;");
-//$("#edit_form").on("submit", function(){
-//    upper_notice.html(initial_text);
+
 //$.ajax({
 //    url: $("#edit_form").data("url"),
 //    dataType: 'json',
@@ -176,8 +160,4 @@ $(document).ready(function () {
 //    error: function (response) {
 //        console.log(response.responseJSON.errors);
 //    }
-//});
-//return false;
-//});
-//
 //});

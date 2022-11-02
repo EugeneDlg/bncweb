@@ -18,7 +18,7 @@
 			  <div class="card-body p-md-5">
 				<div class="row justify-content-center">
 				  <div class="col-md-10 col-lg-6 order-2 order-lg-1">
-					<p class="text-center h6 fw-bold mb-5 mx-1 mx-md-4 mt-4" id="upper_notice"></p>
+					<p class="text-center h2 fw-bold mb-5 mx-1 mx-md-4 mt-4" id="upper_notice"></p>
 					<form id="signup_form" data-url="{% url 'signup' %}" method="post" enctype="multipart/form-data">
 						{% csrf_token %}
 						{{ form | crispy }}

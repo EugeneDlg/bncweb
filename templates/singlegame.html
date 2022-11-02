@@ -1,1 +1,111 @@
-<h2>Single Game!</h2>
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'game.css' %}"/>{% endblock %}
+{% block title %}
+	Single BnC Game
+{% endblock %} 
+
+{% block content %}
+<div class="py-4">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 text-center">
+        {% if game.result_code == 0 %}
+          <div class="card mb-5 shadow p-2 bg-body rounded game_broken">{{ game.upper_poster }}</div>
+        {% elif game.result_code == 1 %}
+          <div class="card mb-5 shadow p-2 bg-body rounded my_win">{{ game.upper_poster }}</div>
+        {% elif game.result_code == 2 %}
+          <div class="card mb-5 shadow p-2 bg-body rounded your_win">{{ game.upper_poster }}</div>
+        {% elif game.result_code == 3 %}
+          <div class="card mb-5 shadow p-2 bg-body rounded tie">{{ game.upper_poster }}</div>
+        {% else %}
+          <div class="card mb-5 shadow p-2 bg-body rounded">{{ game.upper_poster }}</div>
+        {% endif %}
+      </div>
+    </div>
+      <br>
+      <br>
+    <form id="game_form" data-url="{% url 'singlegame' %}" method="post" {% if not game.game_started %} class="form-inactive" {% endif %}>
+    {% csrf_token %}
+     <div id="firework_place">
+      <div class="row justify-content-center">
+        <div class="col-lg-9 text-center">
+          <div class="card mb-2">
+            <h5 class="card-header">My side</h5>
+            <div class="card m-1 mx-auto" >
+<!--              <div  style="width: 200px; height: 200px;">-->
+              <img class="card-img-top img-fluid" width="50%" height="50%" src="/media/images/my_default_av.jpg" alt="My avatar" >
+<!--                </div>-->
+            </div>
+            <div class="card mb-3 p-2" ><span id="my_guess">I guess your number is:
+              {% if game.my_guess is not None %} {{ game.my_guess }}{% endif %}</span></div>
+            <div>Enter the number of cows:  <input type="text" name="my_cows" autofocus maxlength="10" required id="my_cows"
+                                            {% if not game.game_started %} disabled {% endif %}></div>
+            <br>
+            <div>Enter the number of bulls: <input type="text" name="my_bulls" autofocus maxlength="10" required id="my_bulls"
+                                            {% if not game.game_started %} disabled {% endif %}><br><br></div>
+            {% if game.attempts > 1 %}
+                <div class="card">
+                  <h6 class="card-header">My history</h6>
+                  <ul class="list-group list-group-flush">
+                    {% for i0, i1, i2 in my_items %}
+                      <li class="list-group-item">{{ i0 }} {{ i1 }}.{{ i2 }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+      <br>
+      <div id="wait" ><i>Wait...</i></div>
+      <br>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-12 text-center">
+          <button type="submit" id="ok_button" class="btn btn-primary" style="width: 18rem;">
+            {% if game.game_started %} Ok!
+            {% else %} Play again!
+            {% endif %}
+          </button>
+        </div>
+      </div>
+    </form>
+    {% if game.game_started %}
+      <br>
+      <form id="finish_form" data-url="{% url 'singlegame' %}" method="post" {% if not game.game_started %} class="form-inactive" {% endif %}>
+        {% csrf_token %}
+        <input type="hidden" name="finished_flag" value="1">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 text-center">
+                <button type="submit" id="finished_button" class="btn btn-primary" style="width: 18rem;">
+                    Finish the game
+                </button>
+            </div>
+        </div>
+      </form>
+     {% endif %}
+  </div>
+</div>
+<div class="right">
+    <div class="row ">
+        <div class="col-4">
+            Attempts: {{ game.attempts }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+    {% if game.game_started %} var game_started = true; {% else %} var game_started = false; {% endif %}
+    {% if game.dual_game %} var dual_game = true; {% else %} var dual_game = false; {% endif %}
+    var elapsed = {{ game.elapsed }};
+    {% if game.result_code is None %} var result_code = null; {% else %} var result_code = {{ game.result_code }};{% endif %}
+</script>
+{{ block.super }}
+<script type="text/javascript" src="{% static 'game.js' %}"></script>
+<script type="text/javascript" src="{% static 'jquery.fireworks.js' %}"></script>
+
+{% endblock %}
+

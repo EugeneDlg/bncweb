@@ -18,7 +18,7 @@ urlpatterns = [
     path('password_reset_complete', password_views.PasswordResetCompleteView.as_view(
         template_name="reset_password_complete.html"), name="password_reset_complete"),
     path('edit/', views.edit_profile, name="edit"),
-    path('changepassword/', views.changepassword, name="changepassword"),
+    path('change_password/', views.change_password, name="change_password"),
     path('delete/', views.delete_profile, name="delete"),
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'))),
 
