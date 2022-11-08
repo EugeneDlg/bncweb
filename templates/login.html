@@ -4,8 +4,10 @@
 {% load static %}
 {% load crispy_forms_tags %}
 <title>Login to BnC game</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="{% static 'login.css' %}"/>
 <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}"/>
+
 </head>
 <body>
 <div style="text-align:center;">
@@ -26,8 +28,18 @@
 </div>
 <div class="center">
 	<div class="container">
-		<p class="text-center">Copyright &copy; 2022 Bulls and Cows game by Eugene Dolgov</p>
+        <h6><p class="text-center">Copyright &copy; 2022 Bulls and Cows game by Eugene Dolgov</p></h6>
 	</div>
 </div>
+<!-- Cookie Consent by TermsFeed https://www.TermsFeed.com -->
+<script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.0.0/cookie-consent.js" charset="UTF-8"></script>
+<script type="text/javascript" charset="UTF-8">
+document.addEventListener('DOMContentLoaded', function () {
+cookieconsent.run({"notice_banner_type":"simple","consent_type":"implied","palette":"dark","language":"en",
+    "page_load_consent_levels":["strictly-necessary","functionality","tracking","targeting"],
+    "notice_banner_reject_button_hide":false,"preferences_center_close_button_hide":false,
+    "page_refresh_confirmation_buttons":false});
+});
+</script>
 </body>
 </html>

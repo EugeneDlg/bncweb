@@ -4,19 +4,6 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.template.context_processors import csrf
-
-from crispy_forms.utils import render_crispy_form
-from jsonview.decorators import json_view
-
-from .bnc_lib import read_config, validate_db_user, create_db_user, modify_db_user, send_email
-from .forms import SignUpForm
-
-
-# class MyAuthForm(AuthenticationForm):
-#     required_css_class = "myfield"
-#     nonfield_css_class = "myerror"
 
 
 def login_view(request):
@@ -47,8 +34,3 @@ def login_view(request):
 #         return super().form_valid(form)
 #
 #
-# def signout_view(request):
-#     game = Game.objects.get(game_id=request.session.session_key)
-#     game.delete()
-#     logout(request)
-#     return redirect('login')

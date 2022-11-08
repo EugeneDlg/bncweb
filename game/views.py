@@ -1,5 +1,6 @@
 import datetime as dt
 import math
+from random import choice
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -12,21 +13,20 @@ from crispy_forms.utils import render_crispy_form
 from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList
 from .forms import SettingsForm
 
-from .bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
-from .bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
-from .bnc_lib import get_data_for_fixture_table, read_config
+from bncutils.bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
+from bncutils.bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
+from bncutils.bnc_lib import get_data_for_fixture_table, read_config, read_phrases
 
-CONFIG_PATH = "bnc_config.yml"
-initial_settings = read_config(CONFIG_PATH)
+
+initial_settings = read_config()
+# good_phrases = read_phrases()
 
 
 @login_required(login_url='login')
 def home(request):
     if request.method == "POST":
-        print("home_post")
         game = Game.objects.get(user=request.user)
     else:
-        print("home_get")
         try:
             game = Game.objects.get(user=request.user)
             if game.attempts > 0:
@@ -39,7 +39,6 @@ def home(request):
                 game.upper_poster += " And I will think of a number for you."
             game.save()
         except Game.DoesNotExist:
-            print("game object created initially")
             upper_poster = "Please think of a number with " + str(initial_settings["default_capacity"]) + " digits."
             upper_poster += " And I will think of a number for you."   # dual game is enabled by default
             game = Game.objects.create(
@@ -69,7 +68,6 @@ def dual_game(request):
         your_history = YourHistory.objects.get(game_id=game.game_id)
         total_set = TotalSet.objects.get(game_id=game.game_id)
         if game.attempts == 0:
-            print("attempts=0")
             game.my_guess = get_my_first_guess(game.capacity)
             game.my_number = think_of_number_for_you(game.capacity)
             game.attempts += 1
@@ -77,6 +75,7 @@ def dual_game(request):
             game.game_started = True
             game.new_game_requested = False
             game.upper_poster = "I wish you an interesting game!:-)"
+            # game.upper_poster = choice(good_phrases)
             game.result_code = None
             game.elapsed = 0
             game.save()
@@ -151,7 +150,6 @@ def dual_game(request):
             return render(request, 'dualgame.html', {'game': game,
                                                      'my_items': my_history.items, 'your_items': your_history.items})
     else:
-        print("GET dualgame")
         # create_user_privileges(request)
         try:
             game = Game.objects.get(user=request.user)
@@ -184,13 +182,13 @@ def single_game(request):
         my_history = MyHistory.objects.get(game_id=game.game_id)
         total_set = TotalSet.objects.get(game_id=game.game_id)
         if game.attempts == 0:
-            print("attempts=0")
             game.my_guess = get_my_first_guess(game.capacity)
             game.attempts += 1
             game.start_time = timezone.now()
             game.game_started = True
             game.new_game_requested = False
             game.upper_poster = "I wish you an interesting game!:-)"
+            # game.upper_poster = choice(good_phrases)
             game.result_code = None
             game.elapsed = 0
             game.save()
@@ -248,7 +246,6 @@ def single_game(request):
             return render(request, 'singlegame.html', {'game': game,
                                                        'my_items': my_history.items})
     else:
-        print("GET singlegame")
         # create_user_privileges(request)
         try:
             game = Game.objects.get(user=request.user)

@@ -1,9 +1,6 @@
-rrrr.txt
-frotz/
-tttt
-log
-!log/tttt
-**/__pycache__/
+__pycache__/
 bncweb/test001.py
 game/test001.py
 templates/testajax.html
+bnc_config.yml.backup
+.idea/

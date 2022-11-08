@@ -1,5 +1,4 @@
 ---
-  default_capacity: 4
   pincode:
     subject: Recovering your password
     text: |
@@ -41,10 +40,8 @@
       </html>
   db_connection_string_prefix: postgresql+psycopg2://
   db_socket: rtrdb.cnreopapz1wl.us-east-1.rds.amazonaws.com:5432
-  db_name: bnc
   default_db_user: bnc_default
   default_db_password: Ym5jZGZsdDEh
-  common_db_user: bnc_user
   smtp_address: smtp.mail.ru
   bnc_email: Bulls.And.Cows@mail.ru
   ssl_port: 465

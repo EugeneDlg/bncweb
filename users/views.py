@@ -13,11 +13,11 @@ from django.conf import settings
 from crispy_forms.utils import render_crispy_form
 from jsonview.decorators import json_view
 
-from .bnc_lib import read_config, validate_db_user, create_db_user, modify_db_user, send_email
+from bncutils.bnc_lib import read_config, validate_db_user, create_db_user, modify_db_user, send_email
 from .forms import SignUpForm, UserEditForm
 
-CONFIG_PATH = "bnc_config.yml"
-initial_settings = read_config(CONFIG_PATH)
+
+initial_settings = read_config()
 
 
 @json_view

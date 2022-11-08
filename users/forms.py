@@ -3,11 +3,10 @@ import re
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
-from .models import Extension
-from .bnc_lib import read_config
+from bncutils.bnc_lib import read_config
 
-CONFIG_PATH = "bnc_config.yml"
-initial_settings = read_config(CONFIG_PATH)
+
+initial_settings = read_config()
 
 
 class SignUpForm(UserCreationForm):
@@ -15,7 +14,7 @@ class SignUpForm(UserCreationForm):
     last_name = forms.CharField(max_length=100, required=True)
     email = forms.EmailField(max_length=250, required=True, help_text='eg. youremail@gmail.com')
     avatar = forms.ImageField(max_length=950, required=False,
-                              help_text="Max. volume is 1 Mb. Max. height and width are 600px")
+                              help_text="Max. volume is 2 Mb. Valid formats are jpeg, png, gif.")
 
     class Meta:
         model = User
@@ -38,7 +37,6 @@ class UserEditForm(UserChangeForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # breakpoint()
         instance = kwargs["instance"]
         if str(instance) == initial_settings["admin_user"]:
             self.fields["username"].disabled = True
