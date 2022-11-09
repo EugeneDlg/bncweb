@@ -39,10 +39,10 @@
             </div>
             <div class="card mb-3 p-2" ><span id="my_guess">I guess your number is:
               {% if game.my_guess is not None %} {{ game.my_guess }}{% endif %}</span></div>
-            <div>Enter the number of cows:  <input type="text" name="my_cows" autofocus maxlength="10" required id="my_cows"
+            <div>Enter the number of cows:  <input type="text" name="my_cows" placeholder="x" autofocus maxlength="10" required id="my_cows"
                                             {% if not game.game_started %} disabled {% endif %}></div>
             <br>
-            <div>Enter the number of bulls: <input type="text" name="my_bulls" autofocus maxlength="10" required id="my_bulls"
+            <div>Enter the number of bulls: <input type="text" name="my_bulls" placeholder="x" autofocus maxlength="10" required id="my_bulls"
                                             {% if not game.game_started %} disabled {% endif %}><br><br></div>
             {% if game.attempts > 1 %}
                 <div class="card">
