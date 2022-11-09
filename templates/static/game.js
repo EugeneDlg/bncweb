@@ -51,6 +51,10 @@ $(document).ready(function () {
     wait_item.style.display = 'none';
     if(dual_game){
         show_counter();
+        var temp = "";
+        for (let i=0; i < capacity; i++){temp+="x";}
+        alert(temp);
+        $("#your_guess").attr('placeholder', temp);
     }
     if(!game_started){
         if (Number(result_code)>0){

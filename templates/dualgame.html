@@ -68,7 +68,7 @@
             {% endif %}
 <!--                </div>-->
             </div>
-            <div class="card mb-2 p-1"><span>Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="5" required id="your_guess"
+            <div class="card mb-2 p-1"><span>Enter your guess of my number:  <input type="text" name="your_guess" autofocus maxlength="5" placeholder="x" required id="your_guess"
                                                                                 {% if not game.game_started %} disabled {% endif %}></span></div>
               <div class="card m-2">You have found qty of cow: {% if game.your_cows is not None %} {{ game.your_cows}} {% endif %}</div>
             <br>
@@ -131,6 +131,7 @@
     {% if game.game_started %} var game_started = true; {% else %} var game_started = false; {% endif %}
     {% if game.dual_game %} var dual_game = true; {% else %} var dual_game = false; {% endif %}
     var elapsed = {{ game.elapsed }};
+    var capacity = {{ game.capacity }};
     {% if game.result_code is None %} var result_code = null; {% else %} var result_code = {{ game.result_code }};{% endif %}
 </script>
 {{ block.super }}

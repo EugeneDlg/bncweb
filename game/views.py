@@ -36,11 +36,12 @@ def home(request):
                     return redirect('singlegame')
             game.upper_poster = "Please think of a number with " + str(game.capacity) + " digits."
             if game.dual_game:
-                game.upper_poster += " And I will think of a number for you."
+                game.upper_poster += " And I will think of a number (" + str(game.capacity) + " digits) for you."
             game.save()
         except Game.DoesNotExist:
             upper_poster = "Please think of a number with " + str(initial_settings["default_capacity"]) + " digits."
-            upper_poster += " And I will think of a number for you."   # dual game is enabled by default
+            upper_poster += " And I will think of a number (" + str(initial_settings["default_capacity"]) + \
+                            " digits) for you."   # dual game is enabled by default
             game = Game.objects.create(
                 game_id=request.session.session_key,
                 upper_poster=upper_poster,
@@ -157,7 +158,8 @@ def dual_game(request):
             your_history = YourHistory.objects.get(game_id=game.game_id)
         except Game.DoesNotExist:
             upper_poster = "Please think of a number with " + str(initial_settings["default_capacity"]) + " digits"
-            upper_poster += " And I will think of a number for you."   # dual game is enabled by default
+            upper_poster += " And I will think of a number (" + str(initial_settings["default_capacity"]) + \
+                            " digits) for you."   # dual game is enabled by default
             game = Game.objects.create(
                 game_id=request.session.session_key,
                 game_started=False,
@@ -307,12 +309,12 @@ def reset_to_initials(game):
     my_history = MyHistory.objects.get(game_id=game.game_id)
     my_history.items = []
     my_history.save()
-    upper_poster = "Please think of a number with " + str(game.capacity)+ " digits"
+    upper_poster = "Please think of a number with " + str(game.capacity) + " digits"
     if game.dual_game:
         your_history = YourHistory.objects.get(game_id=game.game_id)
         your_history.items = []
         your_history.save()
-        upper_poster += " And I will think of a number for you."
+        upper_poster += " And I will think of a number (" + str(game.capacity) + " digits) for you."
     total_set = TotalSet.objects.get(game_id=game.game_id)
     total_set.set = []
     total_set.save()
@@ -355,10 +357,12 @@ def write_fl_to_db(request, game):
     f_list.save()
 
 
-@login_required(login_url='login')
 def about(request):
     if request.method == 'POST':
-        game = Game.objects.get(user=request.user)
+        try:
+            game = Game.objects.get(user=request.user)
+        except Game.DoesNotExist:
+            return JsonResponse({"my_number": None})
         return JsonResponse({"my_number": game.my_number})
     else:
         return render(request, "about.html")
