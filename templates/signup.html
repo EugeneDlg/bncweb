@@ -15,18 +15,21 @@
 		<div class="row d-flex justify-content-center align-items-center h-100">
 		  <div class="col-lg-12 col-xl-11">
 			<div class="card text-black" style="border-radius: 25px;">
-			  <div class="card-body p-md-5">
+			  <div class="card-body p-md-3">
 				<div class="row justify-content-center">
+				  <p class="text-center h2 fw-bold mb-3 mx-1 mt-2" id="upper_notice"></p>
 				  <div class="col-md-10 col-lg-6 order-2 order-lg-1">
-					<p class="text-center h2 fw-bold mb-5 mx-1 mx-md-4 mt-4" id="upper_notice"></p>
-					<form id="signup_form" data-url="{% url 'signup' %}" method="post" enctype="multipart/form-data">
-						{% csrf_token %}
-						{{ form | crispy }}
-						<button class="btn btn-primary" type="submit" name="button" >Create user</button>
-					</form>
+<!--					 <img id="av_image2" class="img-fluid" width="1%" height="1%" src="{{ default_avatar }}" hidden>-->
+					 <img id="av_image" class="img-fluid mb-3" width="70%" height="70%" src="https://bncmedia.s3.amazonaws.com/images/your_default_av.jpg" alt="Your avatar" >
+						<form id="signup_form" data-url="{% url 'signup' %}" method="post" enctype="multipart/form-data">
+							{% csrf_token %}
+							{{ form | crispy }}
+							<div class=" justify-content-center  text-center">
+								<button class="btn btn-primary" type="submit" name="button" >Create user</button>
+							</div>
+						</form>
+					  	<div id="wait" class=" justify-content-center  text-center"><i>Wait...</i></div>
 				  </div>
-<!--				  <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">-->
-<!--				  </div>-->
 				</div>
 			  </div>
 			</div>

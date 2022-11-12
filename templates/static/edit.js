@@ -56,10 +56,15 @@ function setImageVisible(id, visible) {
 }
 
 $(document).ready(function () {
+    wait_item = document.getElementById('wait');
+    wait_item.style.display = 'none';
+    wait_item2 = document.getElementById('wait2');
+    wait_item2.style.display = 'none';
     document.getElementById("delete_button").disabled = !is_avatar_available;
     initial_text_show();
     $(main_form).on("submit", function(){
-        var fileInput_ = document.getElementById(avatar);
+        wait_item.style.display = '';
+        var fileInput = document.getElementById(avatar);
         initial_text_show();
         removeWarnings();
         if (!fileValidation()){
@@ -74,6 +79,7 @@ $(document).ready(function () {
             contentType: false,
             processData: false,
             success: function(data) {
+                wait_item.style.display = 'none';
                 var form_without_button = data['form_html'].replace(/<form .*?>/, "");
                 form_without_button = form_without_button.replace(/<\/form>/, "");
                 var form_with_button = form_without_button +
@@ -88,7 +94,6 @@ $(document).ready(function () {
                     $(div_avatar).addClass("file_attention");
                 }
                 else {
-                    var fileInput = document.getElementById(avatar);
                     if (fileInput.files && fileInput.files[0]) {
                         av_image.src = URL.createObjectURL(fileInput.files[0]);
                         document.getElementById("delete_button").disabled = false;
@@ -97,6 +102,7 @@ $(document).ready(function () {
                 }
             },
             error: function (response) {
+                wait_item.style.display = 'none';
                 console.log(response.responseText);
             }
         });
@@ -104,13 +110,16 @@ $(document).ready(function () {
     });
 
     $("#delete_av_form").on("submit", function(){
+        wait_item2.style.display = '';
         $.ajax({
             url: $(this).data("url"),
             method: 'post',
             dataType: 'json',
             data: $(this).serialize(),
             success: function(data){
+                wait_item2.style.display = 'none';
                 if (data.success) {
+
                     var fileInput = document.getElementById(avatar);
                     var new_avatar = fileInput.files[0];
                     // display the default picture after deleting
@@ -122,6 +131,7 @@ $(document).ready(function () {
                 }
             },
             error: function (response) {
+                wait_item2.style.display = 'none';
                 console.log(response.responseText);
             }
         });
@@ -129,35 +139,3 @@ $(document).ready(function () {
     });
 
 });
-
-
-//$.ajax({
-//    url: $("#edit_form").data("url"),
-//    dataType: 'json',
-//    method: 'post',
-//    data: $(this).serialize(),
-//    success: function(data) {
-//        if (!(data.success)) {
-//    	var form_without_button = data['form_html'].replace(/<form .*?>/, "");
-//    	form_without_button = form_without_button.replace(/<\/form>/, "");
-//    	var form_with_button = form_without_button + "<button class=\"edit_button\" type=\"submit\" name=\"button\" >Submit changes</button>";
-//    	console.log(form_with_button);
-//        $('#edit_form').html(form_with_button);
-//        $('#hint_id_password2').text("");
-//        }
-//        else {
-//            // Here you can show the user a success message or do whatever you need
-//            //$('#signup_form').find('.success-message').show();
-////            success_item.style.display = '';
-////            initial_notice.style.display = 'none';
-////            var url = window.location.href;
-////            var pattern = /(.*\/{2})(.*?\/)(.*)/i;
-////            var result = url.match(pattern);
-//            upper_notice.html(success_text);
-//
-//        }
-//    },
-//    error: function (response) {
-//        console.log(response.responseJSON.errors);
-//    }
-//});

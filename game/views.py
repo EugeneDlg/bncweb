@@ -1,25 +1,28 @@
 import datetime as dt
 import math
-from random import choice
+
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-
 from jsonview.decorators import json_view
 from crispy_forms.utils import render_crispy_form
-
-from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList
-from .forms import SettingsForm
 
 from bncutils.bnc_lib import get_my_first_guess, think_of_number_for_you, make_my_guess, validate_cows_and_bulls
 from bncutils.bnc_lib import BnCException, validate_your_guess, make_your_guess, FinishedNotOKException
 from bncutils.bnc_lib import get_data_for_fixture_table, read_config, read_phrases
 
+from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList
+from .forms import SettingsForm
+
 
 initial_settings = read_config()
 # good_phrases = read_phrases()
+initial_single_phrase = "Please think of a number with ___ digits."
+initial_dual_phrase = " And I will think of a number (___ digits) for you."
+default_game_phrase = "I wish you an interesting game!:-)"
+broken_game_phrase = "You have broken my mind! Please be more careful! Think of a new number!"
 
 
 @login_required(login_url='login')
@@ -34,14 +37,14 @@ def home(request):
                     return redirect('dualgame')
                 else:
                     return redirect('singlegame')
-            game.upper_poster = "Please think of a number with " + str(game.capacity) + " digits."
+            game.upper_poster = initial_single_phrase.replace("___", str(game.capacity))
             if game.dual_game:
-                game.upper_poster += " And I will think of a number (" + str(game.capacity) + " digits) for you."
+                game.upper_poster += initial_dual_phrase.replace("___", str(game.capacity))
             game.save()
         except Game.DoesNotExist:
-            upper_poster = "Please think of a number with " + str(initial_settings["default_capacity"]) + " digits."
-            upper_poster += " And I will think of a number (" + str(initial_settings["default_capacity"]) + \
-                            " digits) for you."   # dual game is enabled by default
+            upper_poster = initial_single_phrase.replace("___", str(initial_settings["default_capacity"]))
+            # dual game is enabled by default
+            upper_poster += initial_dual_phrase.replace("___", str(initial_settings["default_capacity"]))  
             game = Game.objects.create(
                 game_id=request.session.session_key,
                 upper_poster=upper_poster,
@@ -75,7 +78,7 @@ def dual_game(request):
             game.start_time = timezone.now()
             game.game_started = True
             game.new_game_requested = False
-            game.upper_poster = "I wish you an interesting game!:-)"
+            game.upper_poster = default_game_phrase
             # game.upper_poster = choice(good_phrases)
             game.result_code = None
             game.elapsed = 0
@@ -100,8 +103,6 @@ def dual_game(request):
                 except BnCException as exc:
                     response = {"success": False, "items": exc.msg}
                     return JsonResponse(response)
-                # except Exception as exc:
-                #     raise exc
                 else:
                     game.my_cows = int(my_cows_entered)
                     game.my_bulls = int(my_bulls_entered)
@@ -157,9 +158,9 @@ def dual_game(request):
             my_history = MyHistory.objects.get(game_id=game.game_id)
             your_history = YourHistory.objects.get(game_id=game.game_id)
         except Game.DoesNotExist:
-            upper_poster = "Please think of a number with " + str(initial_settings["default_capacity"]) + " digits"
-            upper_poster += " And I will think of a number (" + str(initial_settings["default_capacity"]) + \
-                            " digits) for you."   # dual game is enabled by default
+            upper_poster = initial_single_phrase.replace("___", str(initial_settings["default_capacity"]))
+            # dual game is enabled by default
+            upper_poster += initial_dual_phrase.replace("___", str(initial_settings["default_capacity"]))  
             game = Game.objects.create(
                 game_id=request.session.session_key,
                 game_started=False,
@@ -189,7 +190,7 @@ def single_game(request):
             game.start_time = timezone.now()
             game.game_started = True
             game.new_game_requested = False
-            game.upper_poster = "I wish you an interesting game!:-)"
+            game.upper_poster = default_game_phrase
             # game.upper_poster = choice(good_phrases)
             game.result_code = None
             game.elapsed = 0
@@ -256,7 +257,7 @@ def single_game(request):
             game = Game.objects.create(
                 game_id=request.session.session_key,
                 game_started=False,
-                upper_poster="Please think of a number with " + str(initial_settings["default_capacity"]) + " digits",
+                upper_poster=initial_single_phrase.replace("___", str(initial_settings["default_capacity"])),
                 capacity=initial_settings["default_capacity"],
                 attempts=0
             )
@@ -276,7 +277,7 @@ def finish_dual_game(request, game):
     game.game_started = False
     game.new_game_requested = True
     if result_code == 0:
-        game.upper_poster = "You have broken my mind! Please be more careful! Think of a new number!"
+        game.upper_poster = broken_game_phrase
     elif result_code == 1:
         game.upper_poster = "YAHOO! I've won! Thank you the for interesting game! " \
                             "Attempts: " + str(game.attempts)
@@ -298,7 +299,7 @@ def finish_single_game(request, game):
     game.game_started = False
     game.new_game_requested = True
     if result_code == 0:
-        game.upper_poster = "You have broken my mind! Please be more careful! Think of a new number!"
+        game.upper_poster = broken_game_phrase
     elif result_code == 1:
         game.upper_poster = "YAHOO! I've won! Thank you the for interesting game! " \
                             "Attempts: " + str(game.attempts)
@@ -309,12 +310,12 @@ def reset_to_initials(game):
     my_history = MyHistory.objects.get(game_id=game.game_id)
     my_history.items = []
     my_history.save()
-    upper_poster = "Please think of a number with " + str(game.capacity) + " digits"
+    upper_poster = initial_single_phrase.replace("___", str(game.capacity))
     if game.dual_game:
         your_history = YourHistory.objects.get(game_id=game.game_id)
         your_history.items = []
         your_history.save()
-        upper_poster += " And I will think of a number (" + str(game.capacity) + " digits) for you."
+        upper_poster += initial_dual_phrase.replace("___", str(game.capacity))
     total_set = TotalSet.objects.get(game_id=game.game_id)
     total_set.set = []
     total_set.save()

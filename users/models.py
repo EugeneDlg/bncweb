@@ -19,8 +19,6 @@ def get_extension(self):
         extension = Extension.objects.get(user=self)
     except Extension.DoesNotExist:
         extension = None
-    except Exception:
-        raise
     return extension
 
 

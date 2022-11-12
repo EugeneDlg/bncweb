@@ -131,11 +131,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# STATICFILES_DIRS = ('/home/eugineer/PythonProjects/BnCweb/bncweb/templates/static',)
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
+MEDIA_URL = f'https://{os.environ.get("S3_BUCKET")}.s3.amazonaws.com/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# AWS_S3_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+# AWS_S3_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+# AWS_STORAGE_BUCKET_NAME = os.environ["S3_BUCKET"]
+# AWS_S3_REGION_NAME = "us-east-1"
+# AWS_S3_SIGNATURE_VERSION = "s3v4"
+# AWS_DEFAULT_ACL = "public"
+# AWS_PRESIGNED_EXPIRY = 3600
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

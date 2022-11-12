@@ -31,6 +31,8 @@ function fileValidation() {
     if (fileInput.files && fileInput.files[0]) {
 //        var reader = new FileReader();
 //        reader.readAsDataURL(fileInput.files[0]);
+        alert(fileInput.files[0].type);
+        alert(fileInput.files[0].name);
         return true;
     }
 }
@@ -88,6 +90,7 @@ $(document).ready(function () {
                     $(div_avatar).addClass("file_attention");
                 }
                 else {
+                    alert(data.signed_request);
                     var fileInput = document.getElementById(avatar);
                     if (fileInput.files && fileInput.files[0]) {
                         av_image.src = URL.createObjectURL(fileInput.files[0]);

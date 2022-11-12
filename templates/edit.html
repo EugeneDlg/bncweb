@@ -19,13 +19,13 @@
 				<div class="row justify-content-center">
 				  <div class="col-10">
 					<p class="text-center h2 fw-bold mb-3 mx-1 mt-4" id="upper_notice"></p>
-					<img id="av_image2" class="img-fluid" width="1%" height="1%" src="{{ default_avatar }}" hidden>
+					<img id="av_image2" class="img-fluid" width="1%" height="1%" src="https://bncmedia.s3.amazonaws.com/images/your_default_av.jpg" hidden>
 					<div class="col-2 m-1 mx-auto my-auto">
 						<div style="width: 200px; height: 200px;" >
 							{% if request.user.extension.avatar.url is not "" %}
-								<img id="av_image" class="img-fluid" width="50%" height="50%" src="{{ request.user.extension.avatar.url }}" alt="Your avatar" >
+								<img id="av_image" class="img-fluid" width="70%" height="70%" src="{{ request.user.extension.avatar.url }}" alt="Your avatar" >
 							{% else %}
-								<img id="av_image" class="img-fluid" width="80%" height="80%" src="{{ default_avatar }}" alt="Your avatar" >
+								<img id="av_image" class="img-fluid" width="70%" height="70%" src="https://bncmedia.s3.amazonaws.com/images/your_default_av.jpg" alt="Your avatar" >
 							{% endif %}
 						</div>
 						{% if url_type == 'edit' %}
@@ -34,6 +34,7 @@
 								<input type="hidden" name="delete_av" value="1">
 								<button id="delete_button" class="btn btn-primary btn-sm" type="submit" name="delete_button" >Delete picture</button>
 							</form>
+							<div id="wait2" class=" justify-content-center  text-center"><i>Wait...</i></div>
 						{% endif %}
 					</div>
 					<form id="edit_form" data-url="{% url url_type %}" method="post">
@@ -44,6 +45,7 @@
 						</div>
 
 					</form>
+					<div id="wait" class=" justify-content-center  text-center"><i>Wait...</i></div>
 				  </div>
 				</div>
 			  </div>
@@ -58,7 +60,7 @@
 </script>
 {% if url_type == 'edit' %}
 <script type="text/javascript">
-	var default_avatar_path = "{{ default_avatar }}";
+	var default_avatar_path = "https://bncmedia.s3.amazonaws.com/images/your_default_av.jpg";
 	var is_avatar_available = {% if request.user.extension.avatar.url is not "" %} true {% else %} false {% endif %};
 	</script>
 	<script type="text/javascript" src="{% static 'edit.js' %}"></script>

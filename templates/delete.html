@@ -6,6 +6,7 @@
 		<hr>
 		<p>Are you sure you want to stop the game and delete your profile?</p>
 		<form id="delete_form" method="post">
+			{% csrf_token %}
       		<div>
         		<button class="btn btn-primary" type="submit">Delete</button>
 				<input type="button" class="btn btn-primary"  value="Cancel" onclick="history.back()">

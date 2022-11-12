@@ -25,6 +25,7 @@ class SignUpForm(UserCreationForm):
         user.create_extension()
         user.extension.avatar = self.cleaned_data.get('avatar')
         user.extension.save()
+        return user
 
 
 class UserEditForm(UserChangeForm):
@@ -51,6 +52,7 @@ class UserEditForm(UserChangeForm):
         if avatar is not None:
             user.extension.avatar = avatar
             user.extension.save()
+        return user
 
     def clean_avatar(self):
         avatar = self.cleaned_data.get('avatar')

@@ -8,9 +8,11 @@ function initial_text_show(){
 }
 
 $(document).ready(function () {
-
+    wait_item = document.getElementById('wait');
+    wait_item.style.display = 'none';
     initial_text_show();
     $(main_form).on("submit", function(){
+        wait_item.style.display = '';
         initial_text_show();
         var formData = new FormData(this);
         $.ajax({
@@ -21,6 +23,7 @@ $(document).ready(function () {
             contentType: false,
             processData: false,
             success: function(data) {
+                wait_item.style.display = 'none';
                 var form_without_button = data['form_html'].replace(/<form .*?>/, "");
                 form_without_button = form_without_button.replace(/<\/form>/, "");
                 var form_with_button = form_without_button +
@@ -31,6 +34,7 @@ $(document).ready(function () {
                     $('#hint_id_password2').text("");
                 }
                 else {
+                    wait_item.style.display = 'none';
                     $(upper_notice).html(success_text);
                 }
             },

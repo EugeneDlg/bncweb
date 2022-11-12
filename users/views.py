@@ -1,3 +1,13 @@
+import base64
+import hashlib
+import hmac
+import logging
+import os
+import re
+import time
+import urllib
+from hashlib import sha1
+
 from django.shortcuts import render
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.decorators import login_required
@@ -12,10 +22,11 @@ from django.conf import settings
 
 from crispy_forms.utils import render_crispy_form
 from jsonview.decorators import json_view
+import boto3
+from django.http import JsonResponse
 
-from bncutils.bnc_lib import read_config, validate_db_user, create_db_user, modify_db_user, send_email
+from bncutils.bnc_lib import read_config, validate_db_user, create_db_user, modify_db_user, delete_db_user, send_email
 from .forms import SignUpForm, UserEditForm
-
 
 initial_settings = read_config()
 
@@ -27,22 +38,21 @@ def signup_view(request):
         context = csrf(request)
         form_html = render_crispy_form(form, context=context)
         if form.is_valid():
-            form.save()
+            user = form.save()
             username = form.cleaned_data["username"]
             firstname = form.cleaned_data["first_name"]
             lastname = form.cleaned_data["last_name"]
             password = form.cleaned_data["password1"]
             email = form.cleaned_data["email"]
-            # signup_user = User.objects.get(username=username)
             # user_group = Group.objects.get(name='User')
             # user_group.user_set.add(signup_user)
             validate_db_user(initial_settings, username, "create")  # for compatibility with GUI Tkinter version
             create_db_user(initial_settings, username, password)  # for compatibility with GUI Tkinter version
+            avatar = request.FILES.get("avatar")
+            if avatar is not None:
+                s3bucket_upload(user, avatar)
             replace_list = (("FIRSTNAME", firstname), ("LASTNAME", lastname))
-            try:
-                send_email(initial_settings, email, "welcome", replace_list)
-            except Exception as exc:
-                raise exc
+            send_email(initial_settings, email, "welcome", replace_list)
             return {"success": True, "form_html": form_html}
         return {'success': False, 'form_html': form_html}
     else:
@@ -79,6 +89,9 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
+            password = form.cleaned_data["new_password1"]
+            # for compatibility with GUI Tkinter version
+            modify_db_user(initial_settings, str(user), password)
             subject = "Your password has been changed"
             html_message = "You received this message because you or someone else " \
                            "has recently changed your password in <b>BnC game</b>.<br>" \
@@ -109,14 +122,16 @@ def edit_profile(request):
         context = csrf(request)
         form_html = render_crispy_form(form, context=context)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            avatar = request.FILES.get("avatar")
+            if avatar is not None:
+                s3bucket_upload(user, avatar)
             return {"success": True, "form_html": form_html}
         return {"success": False, "form_html": form_html}
     else:
         form = UserEditForm(instance=request.user)
     return render(request, "edit.html", {"form": form, "url_type": "edit",
                                          "label": "Edit your profile",
-                                         "default_avatar": "/media/images/your_default_av.png",
                                          "is_admin": request.user == initial_settings["admin_user"]})
 
 
@@ -125,7 +140,18 @@ def delete_profile(request):
     if request.method == "POST":
         user = User.objects.get(username=request.user)
         user.delete()
+        # for compatibility with tkinter version
+        delete_db_user(initial_settings, str(user))
         logout(request)
         return redirect('login')
     else:
         return render(request, "delete.html")
+
+
+def s3bucket_upload(user, avatar):
+    S3_BUCKET = os.environ.get('S3_BUCKET')
+    s3 = boto3.client('s3')
+    full_file_name = user.extension.avatar.name
+    with avatar.open() as file_obj:
+        s3.upload_fileobj(file_obj, S3_BUCKET, full_file_name,
+                          {'ContentType': 'image/png', 'ACL': 'public-read'})
