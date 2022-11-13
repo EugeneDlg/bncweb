@@ -72,17 +72,8 @@ def dual_game(request):
         your_history = YourHistory.objects.get(game_id=game.game_id)
         total_set = TotalSet.objects.get(game_id=game.game_id)
         if game.attempts == 0:
-            game.my_guess = get_my_first_guess(game.capacity)
             game.my_number = think_of_number_for_you(game.capacity)
-            game.attempts += 1
-            game.start_time = timezone.now()
-            game.game_started = True
-            game.new_game_requested = False
-            game.upper_poster = default_game_phrase
-            # game.upper_poster = choice(good_phrases)
-            game.result_code = None
-            game.elapsed = 0
-            game.save()
+            attempt_zero(game)
             return render(request, 'dualgame.html', {'game': game})
         else:
             if game.new_game_requested:
@@ -185,16 +176,7 @@ def single_game(request):
         my_history = MyHistory.objects.get(game_id=game.game_id)
         total_set = TotalSet.objects.get(game_id=game.game_id)
         if game.attempts == 0:
-            game.my_guess = get_my_first_guess(game.capacity)
-            game.attempts += 1
-            game.start_time = timezone.now()
-            game.game_started = True
-            game.new_game_requested = False
-            game.upper_poster = default_game_phrase
-            # game.upper_poster = choice(good_phrases)
-            game.result_code = None
-            game.elapsed = 0
-            game.save()
+            attempt_zero(game)
             return render(request, 'singlegame.html', {'game': game})
         else:
             if game.new_game_requested:
@@ -249,7 +231,6 @@ def single_game(request):
             return render(request, 'singlegame.html', {'game': game,
                                                        'my_items': my_history.items})
     else:
-        # create_user_privileges(request)
         try:
             game = Game.objects.get(user=request.user)
             my_history = MyHistory.objects.get(game_id=game.game_id)
@@ -269,6 +250,18 @@ def single_game(request):
     return render(request, 'singlegame.html', {'game': game,
                                                'my_items': my_history.items})
 
+
+def attempt_zero(game):
+    game.my_guess = get_my_first_guess(game.capacity)
+    game.attempts += 1
+    game.start_time = timezone.now()
+    game.game_started = True
+    game.new_game_requested = False
+    game.upper_poster = default_game_phrase
+    # game.upper_poster = choice(good_phrases)
+    game.result_code = None
+    game.elapsed = 0
+    game.save()
 
 def finish_dual_game(request, game):
     result_code = game.result_code
