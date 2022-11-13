@@ -20,6 +20,10 @@ def login_view(request):
             # return render(request, 'home.html', {'capacity': request.game.capacity})
             else:
                 return redirect('signup')
+        else:
+            response = render(request, 'login.html', {'form': form})
+            response.status_code = 401
+            return response
     else:
         if request.user.is_authenticated:
             return redirect('home')

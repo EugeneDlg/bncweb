@@ -24,12 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['django_secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 ALLOWED_HOSTS = ["*"]
+if int(os.environ.get("IS_HEROKU")):
+    DEBUG = False
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+else:
+    DEBUG = True
 
 
 # Application definition
