@@ -57,7 +57,8 @@ $(document).ready(function () {
     }
     if(!game_started){
         if (Number(result_code)>0){
-                $('#firework_place').fireworks();
+                $.getScript("/static/jquery.fireworks.js", function(){ $('#firework_place').fireworks();});
+
         }
     }
     $("#game_form").on("submit", function(){
