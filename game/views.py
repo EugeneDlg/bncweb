@@ -85,15 +85,31 @@ def dual_game(request):
                 game.save()
                 return redirect('home')
             if not submit_flag:
-                my_cows_entered = request.POST["my_cows"]
-                my_bulls_entered = request.POST["my_bulls"]
-                your_guess_entered = request.POST["your_guess"]
+                my_cows_entered = request.POST.get("my_cows", None)
+                my_bulls_entered = request.POST.get("my_bulls", None)
+                your_guess_entered = request.POST.get("your_guess", None)
+                if not all([my_bulls_entered, my_cows_entered, your_guess_entered]):
+                    return render(request, 'dualgame.html', {'game': game,
+                                                             'my_items': my_history.items,
+                                                             'your_items': your_history.items})
                 try:
+                    my_side_exception = None
                     validate_cows_and_bulls(my_cows_entered, my_bulls_entered, game.capacity)
+                except BnCException as exc:
+                    my_side_exception = exc
+                try:
+                    your_side_exception = None
                     validate_your_guess(game.capacity, your_guess_entered)
                 except BnCException as exc:
-                    response = {"success": False, "items": exc.msg}
-                    return JsonResponse(response)
+                    your_side_exception = exc
+                if any([my_side_exception, your_side_exception]):
+                    if all([my_side_exception, your_side_exception]):
+                        exception = my_side_exception + your_side_exception
+                    else:
+                        exception = my_side_exception or your_side_exception
+                    response_dict = {"success": False, "items": exception.msg}
+                    response = JsonResponse(response_dict)
+                    return response
                 else:
                     game.my_cows = int(my_cows_entered)
                     game.my_bulls = int(my_bulls_entered)
@@ -188,13 +204,17 @@ def single_game(request):
                 game.save()
                 return redirect('home')
             if not submit_flag:
-                my_cows_entered = request.POST["my_cows"]
-                my_bulls_entered = request.POST["my_bulls"]
+                my_cows_entered = request.POST.get("my_cows", None)
+                my_bulls_entered = request.POST.get("my_bulls", None)
+                if not all([my_bulls_entered, my_cows_entered]):
+                    return render(request, 'dualgame.html', {'game': game,
+                                                             'my_items': my_history.items})
                 try:
                     validate_cows_and_bulls(my_cows_entered, my_bulls_entered, game.capacity)
                 except BnCException as exc:
-                    response = {"success": False, "items": exc.msg}
-                    return JsonResponse(response)
+                    response_dict = {"success": False, "items": exc.msg}
+                    response = JsonResponse(response_dict)
+                    return response
                 else:
                     game.my_cows = int(my_cows_entered)
                     game.my_bulls = int(my_bulls_entered)
@@ -262,6 +282,7 @@ def attempt_zero(game):
     game.result_code = None
     game.elapsed = 0
     game.save()
+
 
 def finish_dual_game(request, game):
     result_code = game.result_code

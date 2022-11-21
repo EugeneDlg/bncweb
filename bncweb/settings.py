@@ -27,7 +27,6 @@ SECRET_KEY = os.environ['django_secret_key']
 ALLOWED_HOSTS = ["*"]
 if int(os.environ.get("IS_HEROKU")):
     DEBUG = False
-
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
