@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
+from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.models import User
+from .models import Visitors
 
 
 def login_view(request):
@@ -25,10 +27,24 @@ def login_view(request):
             response.status_code = 401
             return response
     else:
+        ip_address = get_ip_address(request)
+        visitor = Visitors.objects.create(
+            ip_address=ip_address,
+            time=timezone.now()
+        )
         if request.user.is_authenticated:
             return redirect('home')
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
+
+
+def get_ip_address(request):
+    client_ip = request.META.get("HTTP_X_FORWARDED_FOR")
+    if client_ip:
+        ip_address = client_ip.split(',')[-1]
+    else:
+        ip_address = request.META.get("REMOTE_ADDR")
+    return ip_address
 
 
 # # for compatibility with GUI Tkinter version

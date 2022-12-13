@@ -16,7 +16,11 @@
             <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'edit' %}">Edit profile</a></li>
             <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'change_password' %}">Change password</a></li>
             {% if not request.user.game.game_started %}
-                <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'delete' %}">Delete profile</a></li>
+                {% if request.user.username == 'admin' %}
+                    <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3 disabled" href="{% url 'delete' %}">Delete profile</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'delete' %}">Delete profile</a></li>
+                {% endif %}
             {% endif %}
         {% endif %}
              <li class="nav-item"><a class="nav-link text-light text-uppercase font-weight-bold px-3" href="{% url 'about' %}">About</a></li>
