@@ -1,1 +1,0 @@
-../../../BnCgame/bnc_lib.py

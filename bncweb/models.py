@@ -5,6 +5,8 @@ from django.urls import reverse
 
 class Visitors(models.Model):
     ip_address = models.GenericIPAddressField()
+    os = models.CharField(max_length=250, default='')
+    browser = models.CharField(max_length=250, default='')
     time = models.DateTimeField()
 
     class Meta:

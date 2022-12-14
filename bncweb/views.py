@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
@@ -27,10 +29,17 @@ def login_view(request):
             response.status_code = 401
             return response
     else:
+        breakpoint()
         ip_address = get_ip_address(request)
+        client_info = request.META['HTTP_USER_AGENT']
+        match = re.search(r'.* \((.*)\)\s+(.*)', client_info)
+        client_os = match.group(1).strip()
+        client_browser = match.group(2).strip()
         visitor = Visitors.objects.create(
             ip_address=ip_address,
-            time=timezone.now()
+            os=client_os,
+            browser=client_browser,
+            time=timezone.now(),
         )
         if request.user.is_authenticated:
             return redirect('home')

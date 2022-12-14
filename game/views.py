@@ -15,6 +15,7 @@ from bncutils.bnc_lib import get_data_for_fixture_table, read_config, read_phras
 
 from .models import Game, MyHistory, YourHistory, TotalSet, FixtureList
 from .forms import SettingsForm
+from bncweb.models import Visitors
 
 
 initial_settings = read_config()
