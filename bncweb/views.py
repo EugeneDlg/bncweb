@@ -29,7 +29,6 @@ def login_view(request):
             response.status_code = 401
             return response
     else:
-        breakpoint()
         ip_address = get_ip_address(request)
         client_info = request.META['HTTP_USER_AGENT']
         match = re.search(r'.* \((.*)\)\s+(.*)', client_info)
