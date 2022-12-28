@@ -7,7 +7,15 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 from .models import Visitors
+from .seriaizers import UserSerializer
+
 
 
 def login_view(request):
@@ -54,6 +62,42 @@ def get_ip_address(request):
         ip_address = request.META.get("REMOTE_ADDR")
     return ip_address
 
+
+# class GetUsers(APIView):
+    # @swagger_auto_schema(
+    #     tags=['User info'],
+    #     operation_id='Get user info',
+    #     operation_description='Get info about all users',
+    #     responses={
+    #         '200': 'OK',
+    #         '400': 'Bad request'
+    #     },
+    #     # request_body=openapi.Schema(
+    #     #     type=openapi.TYPE_OBJECT,
+    #     #     properties={
+    #     #         'users ids': openapi.Schema(type=openapi.TYPE_INTEGER, description='users ids'),
+    #     #     }
+    #     # )
+    # )
+    # def get(self, request):
+    #     qs = User.objects.all()
+    #     serializer_for_qs = UserSerializer(instance=qs, many=True)
+    #     return Response(serializer_for_qs.data)
+
+
+class UsersViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    http_method_names = ('get', 'post', 'patch', 'delete')
+
+
+class AddUsers(APIView):
+    def post(self, request):
+        data = request.data
+
+            queryset = User.objects.all()
+            serializer_class = UserSerializer
+            http_method_names = ('get', 'post', 'patch', 'delete')
 
 # # for compatibility with GUI Tkinter version
 # class MyPasswordResetConfirmView(PasswordResetConfirmView):
