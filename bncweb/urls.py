@@ -35,7 +35,8 @@ urlpatterns = [
     path('login/', views.login_view, name="login"),
     path('', include('game.urls')),
     path('', include('users.urls')),
-    # path('api/users/', views.GetUsers.as_view()),
+    path('api/users/', views.GetUsersView.as_view()),
+    path('api/test/', views.TestAPIView.as_view()),
 ]
 
 schema_view = get_schema_view(
@@ -52,11 +53,11 @@ urlpatterns += [
     path(r'swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
 
-router = routers.SimpleRouter()
-router.register('users', views.UsersViewSet, basename='users')
-
-urlpatterns += [
-    path('api/', include(router.urls)),
-]
+# router = routers.SimpleRouter()
+# router.register('users', views.UsersViewSet, basename='users')
+#
+# urlpatterns += [
+#     path('api/', include(router.urls)),
+# ]
 # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

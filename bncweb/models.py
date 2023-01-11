@@ -14,3 +14,17 @@ class Visitors(models.Model):
 
     def __str__(self):
         return str(self.ip_address)
+
+
+class TestAPI(models.Model):
+    username = models.ForeignKey(User, to_field='username', on_delete=models.CASCADE)
+    item = models.CharField(max_length=10, default='item')
+    digit = models.IntegerField()
+    date = models.DateTimeField()
+
+    class Meta:
+        db_table = 'testapi'
+
+    def __str__(self):
+        return str(self.username)
+
