@@ -4,20 +4,6 @@ from django.contrib.auth.models import User
 from .models import Game
 
 
-# class UserEditForm(UserChangeForm):
-#     # def __init__(self, *args, **kwargs):
-#         # super().__init__(*args, **kwargs)
-#         # self.fields['password'].
-#     first_name = forms.CharField(max_length=100, required=True)
-#     last_name = forms.CharField(max_length=100, required=True)
-#     email = forms.EmailField(max_length=250, required=True, help_text='eg. youremail@gmail.com')
-#     password = forms.CharField(widget=forms.HiddenInput())
-#
-#     class Meta:
-#         model = User
-#         fields = ('first_name', 'last_name', 'username', 'email')
-
-
 class SettingsForm(forms.Form):
     def __init__(self, user, post_dict=None, *args, **kwargs):
         self.user = user

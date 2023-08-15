@@ -117,7 +117,6 @@ def dual_game(request):
                     game.your_guess = str(your_guess_entered)
                     game.save()
                     return JsonResponse({"success": True})
-            # result_code = None
             if my_history.items is None:
                 game.my_history_list = []
             else:
@@ -160,7 +159,6 @@ def dual_game(request):
             return render(request, 'dualgame.html', {'game': game,
                                                      'my_items': my_history.items, 'your_items': your_history.items})
     else:
-        # create_user_privileges(request)
         try:
             game = Game.objects.get(user=request.user)
             my_history = MyHistory.objects.get(game_id=game.game_id)
@@ -221,7 +219,6 @@ def single_game(request):
                     game.my_bulls = int(my_bulls_entered)
                     game.save()
                     return JsonResponse({"success": True})
-            # result_code = None
             if my_history.items is None:
                 game.my_history_list = []
             else:
@@ -393,15 +390,3 @@ def settings(request):
     else:
         form = SettingsForm(request.user)
     return render(request, "settings.html", {'form': form})
-
-# проверить это. почему привилегии создаются в ткинтер-версии, а не здесь
-# def create_user_privileges(request):
-#     privileges = Privileges.objects.create(
-#         username=request.user,
-#         create_other=False,
-#         modify_self = False,
-#         modify_other = False,
-#         delete_self = False,
-#         delete_other = False
-#     )
-#     privileges.save()

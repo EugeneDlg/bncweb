@@ -1,12 +1,4 @@
-import base64
-import hashlib
-import hmac
-import logging
 import os
-import re
-import time
-import urllib
-from hashlib import sha1
 
 from django.shortcuts import render
 from django.contrib.auth.views import PasswordResetConfirmView
@@ -23,7 +15,6 @@ from django.conf import settings
 from crispy_forms.utils import render_crispy_form
 from jsonview.decorators import json_view
 import boto3
-from django.http import JsonResponse
 
 from bncutils.bnc_lib import read_config, validate_db_user, create_db_user, modify_db_user, delete_db_user, send_email
 from .forms import SignUpForm, UserEditForm
