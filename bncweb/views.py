@@ -40,14 +40,15 @@ def login_view(request):
         ip_address = get_ip_address(request)
         client_info = request.META['HTTP_USER_AGENT']
         match = re.search(r'.* \((.*)\)\s+(.*)', client_info)
-        client_os = match.group(1).strip()
-        client_browser = match.group(2).strip()
-        visitor = Visitors.objects.create(
-            ip_address=ip_address,
-            os=client_os,
-            browser=client_browser,
-            time=timezone.now(),
-        )
+        if match is not None:
+            client_os = match.group(1).strip()
+            client_browser = match.group(2).strip()
+            visitor = Visitors.objects.create(
+                ip_address=ip_address,
+                os=client_os,
+                browser=client_browser,
+                time=timezone.now(),
+            )
         if request.user.is_authenticated:
             return redirect('home')
         form = AuthenticationForm()
